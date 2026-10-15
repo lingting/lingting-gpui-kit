@@ -11,7 +11,7 @@ pub(crate) type RouteFactory = Rc<dyn Fn(&mut Window, &mut App) -> AnyView>;
 
 /// 页面的缓存策略。
 #[derive(Clone, Copy, PartialEq, Eq)]
-enum CachePolicy {
+pub(crate) enum CachePolicy {
     /// 全局缓存：页面创建后一直保留，再次进入时复用同一份页面状态。
     Global,
     /// 不缓存：页面只在停留期间存在，离开路由后丢弃。

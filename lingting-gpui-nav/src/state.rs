@@ -111,10 +111,10 @@ fn active_page(
     window: &mut Window,
     cx: &mut App,
 ) -> AnyView {
-    if let Some((active_path, view)) = cx.global::<ActiveView>().0.as_ref() {
-        if active_path == path {
-            return view.clone();
-        }
+    if let Some((active_path, view)) = cx.global::<ActiveView>().0.as_ref()
+        && active_path == path
+    {
+        return view.clone();
     }
 
     let view = factory(window, cx);
