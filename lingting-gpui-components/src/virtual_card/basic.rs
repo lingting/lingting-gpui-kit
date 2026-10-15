@@ -1,8 +1,3 @@
-//! 虚拟卡片：卡片 + 固定高度虚拟列表。
-//!
-//! 卡片负责容器与标题，列表负责子项的虚拟滚动；两者通过 [`VirtualCard`] 组合，
-//! 使调用方只需要提供一个标题和一个子项渲染器。
-
 use std::rc::Rc;
 
 use gpui_kit::component::StyledExt as _;

@@ -1,10 +1,3 @@
-//! 卡片容器。
-//!
-//! 圆角容器，白底细边细投影；标题区高度自适应，内容区占用剩余空间。
-//! 标题区内边距、内容区内边距与两者之间的间隔都可分别覆盖。
-//! `ghost` 模式下不绘制卡片表面（背景、边框与投影），但标题区仍绘制一块带圆角的底色，
-//! 用于把卡片当作纯布局容器使用。
-
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::prelude::FluentBuilder as _;
 use gpui_kit::*;

@@ -1,5 +1,3 @@
-//! 当前路由状态与页面缓存。
-
 use std::collections::HashMap;
 
 use gpui_kit::*;

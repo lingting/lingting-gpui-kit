@@ -1,8 +1,3 @@
-//! 窗口控制按钮（最小化 / 最大化 / 关闭）。
-//!
-//! 仅在 Windows 平台编译与渲染。按钮通过 [`WindowControlArea`] 交给系统处理点击，
-//! 因此不需要自己绑定点击事件。
-
 use gpui_kit::assets::IconName;
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::*;

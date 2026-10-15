@@ -1,16 +1,3 @@
-//! 卡片列表项：左 / 中 / 右三栏。
-//!
-//! 中间栏占用左右两栏之外的剩余宽度，左右两栏默认由内容自适应，
-//! 需要各行对齐时再分别指定宽度。
-//!
-//! 与 [`super::Card`] 的区别是它自己绘制卡片表面：选中态需要同时改底色与边框色，
-//! 而 [`super::Card`] 的表面不会为单个实例让步；圆角、边框与内边距因此在本组件内保持一致。
-//! 选中样式由 [`ItemCardSelectedStyle`] 决定，默认的浅染只改底色与边框。
-//! 行高由外部固定（虚拟列表按固定高度计算可见区间），因此各栏内容按行高居中而不是撑开高度。
-//!
-//! 三栏只负责布局，不套用任何内容样式：文字尺寸、颜色与截断都由调用方在传入的元素上声明。
-//! 唯一例外是 [`ItemCardSelectedStyle::Filled`] 会在选中时给出文字颜色，调用方自己声明的颜色仍然优先。
-
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::component::StyledExt as _;
 use gpui_kit::prelude::FluentBuilder as _;

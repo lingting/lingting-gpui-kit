@@ -1,5 +1,3 @@
-//! 路由表：路径与页面工厂的映射。
-
 use std::rc::Rc;
 
 use gpui_kit::*;

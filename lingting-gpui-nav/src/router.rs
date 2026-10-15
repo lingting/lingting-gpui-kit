@@ -1,5 +1,3 @@
-//! 路由出口：把当前路径对应的页面渲染出来。
-
 use gpui_kit::*;
 
 use super::route::Router;

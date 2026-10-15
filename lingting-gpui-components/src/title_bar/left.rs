@@ -1,5 +1,3 @@
-//! 标题栏左侧：应用图标 + 标题。
-
 use gpui_kit::base::StyledExt as _;
 use gpui_kit::*;
 

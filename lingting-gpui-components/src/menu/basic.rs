@@ -1,5 +1,3 @@
-//! 单个菜单项。
-
 use gpui_kit::assets::IconName;
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::prelude::FluentBuilder as _;
