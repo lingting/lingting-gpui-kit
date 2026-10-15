@@ -25,13 +25,13 @@ pub enum MenuSelectedStyle {
 
 /// 标题栏菜单项。
 ///
-/// 由 [`Menu::new`] 建立默认值：图标 14px、高度 32px、未选中、
+/// 由 [`Menu::new`] 建立默认值：不显示图标、高度 32px、未选中、
 /// [`MenuSelectedStyle::Elevated`]，再按需覆盖其中部分。
 #[derive(IntoElement)]
 pub struct Menu {
     path: &'static str,
     label: &'static str,
-    icon: IconName,
+    icon: Option<IconName>,
     icon_size: Pixels,
     height: Pixels,
     selected: bool,
@@ -42,16 +42,22 @@ impl Menu {
     /// 创建菜单项。
     ///
     /// `path` 既是点击后跳转的路由，也是元素 id。
-    pub fn new(path: &'static str, label: &'static str, icon: IconName) -> Self {
+    pub fn new(path: &'static str, label: &'static str) -> Self {
         Self {
             path,
             label,
-            icon,
+            icon: None,
             icon_size: ICON_SIZE,
             height: ITEM_HEIGHT,
             selected: false,
             selected_style: MenuSelectedStyle::default(),
         }
+    }
+
+    /// 指定图标，未指定时不渲染图标。
+    pub fn icon(mut self, icon: IconName) -> Self {
+        self.icon = Some(icon);
+        self
     }
 
     /// 覆盖图标尺寸。
@@ -131,12 +137,14 @@ impl RenderOnce for Menu {
                 this.hover(|this| this.bg(theme.secondary_hover))
             })
             .on_click(move |_, _, cx| navigate(cx, path))
-            .child(
-                svg()
-                    .path(self.icon.path())
-                    .size(self.icon_size)
-                    .text_color(icon_color),
-            )
+            .when_some(self.icon, |this, icon| {
+                this.child(
+                    svg()
+                        .path(icon.path())
+                        .size(self.icon_size)
+                        .text_color(icon_color),
+                )
+            })
             .child(self.label)
             .into_any_element()
     }
