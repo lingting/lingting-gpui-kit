@@ -6,3 +6,5 @@
   - [readme](nav/readme.md)：路由表、页面出口与页面缓存策略。
 - 布局：`lingting-gpui-layout`
   - 暂无文档，该 crate 尚未提供布局能力。
+- 工具：`lingting-gpui-kit`
+  - [window_options_builder](window_options_builder.md)：按物理像素描述窗口尺寸并构造窗口选项。
