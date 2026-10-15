@@ -5,14 +5,42 @@
 //!
 //! 与 [`super::Card`] 的区别是它自己绘制卡片表面：选中态需要同时改底色与边框色，
 //! 而 [`super::Card`] 的表面不会为单个实例让步；圆角、边框与内边距因此在本组件内保持一致。
+//! 选中样式由 [`ItemCardSelectedStyle`] 决定，默认的浅染只改底色与边框。
 //! 行高由外部固定（虚拟列表按固定高度计算可见区间），因此各栏内容按行高居中而不是撑开高度。
 //!
 //! 三栏只负责布局，不套用任何内容样式：文字尺寸、颜色与截断都由调用方在传入的元素上声明。
+//! 唯一例外是 [`ItemCardSelectedStyle::Filled`] 会在选中时给出文字颜色，调用方自己声明的颜色仍然优先。
 
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::component::StyledExt as _;
 use gpui_kit::prelude::FluentBuilder as _;
 use gpui_kit::*;
+
+/// 选中样式。
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum ItemCardSelectedStyle {
+    /// 浅染：主题色边框配一层很淡的主题色底，默认样式。
+    #[default]
+    Tinted,
+    /// 浮起：主题背景色、一圈浅边与投影，视觉上从列表里浮起来。
+    Elevated,
+    /// 实底：主题色背景配反白文字，选中项整块染色。
+    Filled,
+}
+
+/// 选中项的投影。
+///
+/// GPUI 的 `blur_radius` 是高斯标准差，而 CSS 的 blur 是它的两倍，
+/// 照搬 Tailwind 的半径会糊成一片灰雾，因此这里取一半的半径。
+fn selected_shadow() -> Vec<BoxShadow> {
+    let ink = hsla(0., 0., 0., 0.1);
+    vec![
+        BoxShadow::new(px(0.), px(1.), ink).blur_radius(px(1.5)),
+        BoxShadow::new(px(0.), px(2.), ink)
+            .blur_radius(px(2.))
+            .spread_radius(px(-1.)),
+    ]
+}
 
 /// 行点击处理。
 type ClickHandler = Box<dyn Fn(&mut Window, &mut App) + 'static>;
@@ -28,6 +56,7 @@ pub struct ItemCard {
     right_width: Option<Rems>,
     style: StyleRefinement,
     selected: bool,
+    selected_style: ItemCardSelectedStyle,
     on_click: Option<ClickHandler>,
 }
 
@@ -43,6 +72,7 @@ impl ItemCard {
             right_width: None,
             style: StyleRefinement::default(),
             selected: false,
+            selected_style: ItemCardSelectedStyle::default(),
             on_click: None,
         }
     }
@@ -96,7 +126,11 @@ impl ItemCard {
         self.selected = selected;
         self
     }
-
+    /// 设置选中样式，默认为 [`ItemCardSelectedStyle::Tinted`]。
+    pub fn selected_style(mut self, style: ItemCardSelectedStyle) -> Self {
+        self.selected_style = style;
+        self
+    }
     /// 设置点击处理。行本身可点击，因此同时也提供键盘激活。
     pub fn on_click(mut self, handler: impl Fn(&mut Window, &mut App) + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
@@ -121,6 +155,7 @@ impl RenderOnce for ItemCard {
             right_width,
             style,
             selected,
+            selected_style,
             on_click,
         } = self;
 
@@ -144,10 +179,21 @@ impl RenderOnce for ItemCard {
             .refine_style(&style)
             .rounded_lg()
             .border_1()
-            .when(selected, |this| {
+            .when(selected, |this| match selected_style {
                 // 选中是持久状态，用元素自身的底色与边框表达，不用单侧边条。
-                this.border_color(cx.theme().primary)
-                    .bg(cx.theme().primary.opacity(0.08))
+                ItemCardSelectedStyle::Tinted => this
+                    .border_color(cx.theme().primary)
+                    .bg(cx.theme().primary.opacity(0.08)),
+                ItemCardSelectedStyle::Elevated => this
+                    .bg(cx.theme().background)
+                    .border_color(cx.theme().border)
+                    .shadow(selected_shadow()),
+                ItemCardSelectedStyle::Filled => this
+                    .bg(cx.theme().primary)
+                    .border_color(cx.theme().primary)
+                    // 调用方在子元素上声明的颜色优先级更高，这里的文字颜色只作为缺省值。
+                    .text_color(cx.theme().primary_foreground)
+                    .hover(|this| this.bg(cx.theme().primary_hover)),
             })
             .when(!selected, |this| {
                 this.bg(cx.theme().background)
