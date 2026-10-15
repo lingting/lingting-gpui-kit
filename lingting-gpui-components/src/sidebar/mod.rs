@@ -13,11 +13,11 @@ const SIDEBAR_WIDTH: Pixels = px(220.);
 /// 侧栏内边距。
 const SIDEBAR_PADDING: Pixels = px(8.);
 
-/// 顶部段最大高度。
-const TOP_MAX_HEIGHT: Pixels = px(160.);
+/// 顶部段最大高度默认值。
+pub const TOP_MAX_HEIGHT: Pixels = px(160.);
 
-/// 底部段最大高度。
-const BOTTOM_MAX_HEIGHT: Pixels = px(160.);
+/// 底部段最大高度默认值。
+pub const BOTTOM_MAX_HEIGHT: Pixels = px(160.);
 
 /// 侧栏。
 ///

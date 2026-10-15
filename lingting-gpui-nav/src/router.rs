@@ -23,8 +23,14 @@ impl Outlet {
 impl Render for Outlet {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         match state::page_for_current_path(window, cx) {
-            Some(view) => div().size_full().child(view).into_any_element(),
-            None => div().size_full().into_any_element(),
+            // 页面拿到确定的宽高，铺满内容区后自行管理内部滚动；超出部分在此裁剪，
+            // 不会溢出到相邻区域上。
+            Some(view) => div()
+                .size_full()
+                .overflow_hidden()
+                .child(view)
+                .into_any_element(),
+            None => div().size_full().overflow_hidden().into_any_element(),
         }
     }
 }

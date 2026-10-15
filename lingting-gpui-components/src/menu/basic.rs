@@ -27,8 +27,8 @@ pub enum MenuSelectedStyle {
 /// [`MenuSelectedStyle::Elevated`]，再按需覆盖其中部分。
 #[derive(IntoElement)]
 pub struct Menu {
-    path: &'static str,
-    label: &'static str,
+    path: SharedString,
+    label: SharedString,
     icon: Option<IconName>,
     icon_size: Pixels,
     height: Pixels,
@@ -40,10 +40,10 @@ impl Menu {
     /// 创建菜单项。
     ///
     /// `path` 既是点击后跳转的路由，也是元素 id。
-    pub fn new(path: &'static str, label: &'static str) -> Self {
+    pub fn new(path: impl Into<SharedString>, label: impl Into<SharedString>) -> Self {
         Self {
-            path,
-            label,
+            path: path.into(),
+            label: label.into(),
             icon: None,
             icon_size: ICON_SIZE,
             height: ITEM_HEIGHT,
@@ -100,7 +100,7 @@ fn selected_shadow() -> Vec<BoxShadow> {
 impl RenderOnce for Menu {
     fn render(self, _window: &mut Window, cx: &mut App) -> impl IntoElement {
         let theme = cx.theme();
-        let path = self.path;
+        let path = self.path.clone();
         let filled = self.selected && self.selected_style == MenuSelectedStyle::Filled;
         // SVG 不继承文本颜色，必须显式给值，否则图标不绘制。
         let icon_color = if filled {
@@ -134,7 +134,7 @@ impl RenderOnce for Menu {
             .when(!self.selected, |this| {
                 this.hover(|this| this.bg(theme.secondary_hover))
             })
-            .on_click(move |_, _, cx| navigate(cx, path))
+            .on_click(move |_, _, cx| navigate(cx, &path))
             .when_some(self.icon, |this, icon| {
                 this.child(
                     svg()
