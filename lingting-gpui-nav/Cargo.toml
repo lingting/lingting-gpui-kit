@@ -1,0 +1,14 @@
+[package]
+name = "lingting-gpui-nav"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+categories.workspace = true
+license.workspace = true
+description.workspace = true
+
+[dependencies]
+gpui-kit = { workspace = true }
