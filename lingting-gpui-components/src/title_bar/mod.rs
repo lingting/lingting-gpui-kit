@@ -1,12 +1,12 @@
 //! 自绘标题栏。
 //!
-//! 布局为 左侧（图标 + 标题） - 中间（居中菜单，占用剩余空间） - 右侧（窗口按钮）。
+//! 布局为 左侧（图标 + 标题） - 中间（占用剩余空间） - 右侧（窗口按钮）。
 //!
-//! 图标、标题与菜单均由调用方传入，未传入的部分不渲染；高度未指定时使用
+//! 图标、标题与中间内容均由调用方传入，未传入的部分不渲染；高度未指定时使用
 //! [`TITLE_BAR_HEIGHT`]。Windows 平台额外提供 [`WindowsControls`]，用于配置右侧三个窗口按钮。
 //!
 //! 可拖动区域必须避开交互元素：`WindowControlArea` 的命中判定按插入顺序取第一个，
-//! 父元素上的 `Drag` 会盖住子元素的窗口按钮与菜单，因此 `Drag` 只加在左侧与菜单两侧的空白上。
+//! 父元素上的 `Drag` 会盖住子元素的窗口按钮与中间内容，因此 `Drag` 只加在左侧与中间内容两侧的空白上。
 
 #[cfg(target_os = "windows")]
 mod controls;
@@ -29,19 +29,19 @@ pub struct TitleBar {
     height: Pixels,
     icon: Option<AnyElement>,
     title: Option<SharedString>,
-    menu: Option<AnyElement>,
+    center: Option<AnyElement>,
     #[cfg(target_os = "windows")]
     windows: WindowsControls,
 }
 
 impl TitleBar {
-    /// 创建标题栏：默认高度，无图标、标题与菜单，Windows 下渲染默认尺寸的窗口按钮。
+    /// 创建标题栏：默认高度，无图标、标题与中间内容，Windows 下渲染默认尺寸的窗口按钮。
     pub fn new() -> Self {
         Self {
             height: TITLE_BAR_HEIGHT,
             icon: None,
             title: None,
-            menu: None,
+            center: None,
             #[cfg(target_os = "windows")]
             windows: WindowsControls::new(),
         }
@@ -65,9 +65,9 @@ impl TitleBar {
         self
     }
 
-    /// 设置中间菜单，由调用方负责其内部布局与居中。
-    pub fn menu(mut self, menu: impl IntoElement) -> Self {
-        self.menu = Some(menu.into_any_element());
+    /// 设置标题栏中间区域的内容。
+    pub fn center(mut self, center: impl IntoElement) -> Self {
+        self.center = Some(center.into_any_element());
         self
     }
 
@@ -110,7 +110,7 @@ impl RenderOnce for TitleBar {
                     .flex()
                     .items_center()
                     .child(drag_spacer("title-bar-drag-left"))
-                    .children(self.menu)
+                    .children(self.center)
                     .child(drag_spacer("title-bar-drag-right")),
             )
             .children(controls)
@@ -118,7 +118,7 @@ impl RenderOnce for TitleBar {
     }
 }
 
-/// 菜单两侧的空白拖动区。
+/// 中间内容两侧的空白拖动区。
 fn drag_spacer(id: &'static str) -> AnyElement {
     div()
         .id(id)
