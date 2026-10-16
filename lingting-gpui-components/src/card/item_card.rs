@@ -44,6 +44,7 @@ pub struct ItemCard {
     style: StyleRefinement,
     selected: bool,
     selected_style: ItemCardSelectedStyle,
+    hoverable: bool,
     on_click: Option<ClickHandler>,
 }
 
@@ -60,6 +61,7 @@ impl ItemCard {
             style: StyleRefinement::default(),
             selected: false,
             selected_style: ItemCardSelectedStyle::default(),
+            hoverable: true,
             on_click: None,
         }
     }
@@ -118,6 +120,13 @@ impl ItemCard {
         self.selected_style = style;
         self
     }
+    /// 设置是否应用悬浮样式，默认为 `true`。
+    ///
+    /// 纯展示的卡片没有可点击行为，悬浮反馈会把它误读成可点击，此时关掉即可。
+    pub fn hoverable(mut self, hoverable: bool) -> Self {
+        self.hoverable = hoverable;
+        self
+    }
     /// 设置点击处理。行本身可点击，因此同时也提供键盘激活。
     pub fn on_click(mut self, handler: impl Fn(&mut Window, &mut App) + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
@@ -143,6 +152,7 @@ impl RenderOnce for ItemCard {
             style,
             selected,
             selected_style,
+            hoverable,
             on_click,
         } = self;
 
@@ -180,12 +190,16 @@ impl RenderOnce for ItemCard {
                     .border_color(cx.theme().primary)
                     // 调用方在子元素上声明的颜色优先级更高，这里的文字颜色只作为缺省值。
                     .text_color(cx.theme().primary_foreground)
-                    .hover(|this| this.bg(cx.theme().primary_hover)),
+                    .when(hoverable, |this| {
+                        this.hover(|this| this.bg(cx.theme().primary_hover))
+                    }),
             })
             .when(!selected, |this| {
                 this.bg(cx.theme().background)
                     .border_color(cx.theme().border)
-                    .hover(|this| this.bg(cx.theme().secondary_hover))
+                    .when(hoverable, |this| {
+                        this.hover(|this| this.bg(cx.theme().secondary_hover))
+                    })
             })
             .track_focus(&focus_handle)
             .focus_visible(|this| this.border_color(cx.theme().ring))
