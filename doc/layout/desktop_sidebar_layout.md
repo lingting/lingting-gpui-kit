@@ -19,7 +19,8 @@
 ## 使用
 
 ```rust
-use lingting_gpui_layout::desktop_sidebar_layout::{init_router, DesktopSidebarLayout, RouteDefinition};
+use lingting_gpui_layout::desktop_sidebar_layout::{init_router, DesktopSidebarLayout};
+use lingting_gpui_layout::router::RouteDefinition;
 
 let routes = vec![
     RouteDefinition::new("/home", "首页", |_, cx| Home::new(cx)),
@@ -38,8 +39,9 @@ let layout = cx.new(|cx| DesktopSidebarLayout::new(cx).routes(routes));
 ## 模块导出
 
 - `DesktopSidebarLayout`
-- `RouteDefinition`（从 `crate::router` 再导出）
 - `init_router(cx, default_path, routes)`：转发到布局通用的 `crate::router::init_router`
+
+`RouteDefinition` 不在本模块再导出，从 [`crate::router`](router.md) 引入。
 
 ## API
 
@@ -61,7 +63,7 @@ let layout = cx.new(|cx| DesktopSidebarLayout::new(cx).routes(routes));
 | --- | --- |
 | `icon(impl Fn(&mut Window, &mut App) -> AnyElement + 'static)` | 左侧图标，尺寸由调用方决定 |
 | `title(impl Into<SharedString>)` | 左侧标题 |
-| `title_bar_height(impl Into<Pixels>)` | 覆盖标题栏高度 |
+| `title_bar_height(impl Into<Pixels>)` | 覆盖标题栏高度（标题栏属于系统装饰基准层，用固定像素） |
 | `title_bar_center(impl Fn(&mut Window, &mut App) -> AnyElement + 'static)` | 标题栏中间区域内容 |
 | `title_bar_windows(WindowsControls)` | 仅 Windows：窗口按钮的尺寸与显隐 |
 
@@ -69,13 +71,13 @@ let layout = cx.new(|cx| DesktopSidebarLayout::new(cx).routes(routes));
 
 | 方法 | 说明 |
 | --- | --- |
-| `sidebar_width(impl Into<Pixels>)` | 覆盖侧栏宽度 |
-| `sidebar_padding(impl Into<Pixels>)` | 覆盖侧栏内边距 |
+| `sidebar_width(impl Into<Rems>)` | 覆盖侧栏宽度 |
+| `sidebar_padding(impl Into<Rems>)` | 覆盖侧栏内边距 |
 | `sidebar_top(impl Fn(&mut Window, &mut App) -> AnyElement + 'static)` | 顶部段内容 |
-| `sidebar_top_max_height(impl Into<Pixels>)` | 覆盖顶部段最大高度 |
+| `sidebar_top_max_height(impl Into<Rems>)` | 覆盖顶部段最大高度 |
 | `sidebar_top_max_height_auto()` | 顶部段高度自适应：不设上限，由内容决定 |
 | `sidebar_bottom(...)` | 底部段内容 |
-| `sidebar_bottom_max_height(impl Into<Pixels>)` | 覆盖底部段最大高度 |
+| `sidebar_bottom_max_height(impl Into<Rems>)` | 覆盖底部段最大高度 |
 | `sidebar_bottom_max_height_auto()` | 底部段高度自适应：不设上限，由内容决定 |
 
 中间段固定由本布局的菜单填充，因此没有 `sidebar_middle`。
@@ -84,16 +86,25 @@ let layout = cx.new(|cx| DesktopSidebarLayout::new(cx).routes(routes));
 
 | 方法 | 说明 |
 | --- | --- |
-| `menu_height(impl Into<Pixels>)` | 覆盖菜单项高度 |
-| `menu_icon_size(impl Into<Pixels>)` | 覆盖菜单项图标尺寸 |
+| `menu_height(impl Into<AbsoluteLength>)` | 覆盖菜单项高度 |
+| `menu_icon_size(impl Into<AbsoluteLength>)` | 覆盖菜单项图标尺寸 |
+| `menu_text_size(impl Into<AbsoluteLength>)` | 覆盖菜单项字号 |
 | `menu_selected_style(MenuSelectedStyle)` | 设置菜单选中样式 |
 
 菜单逐项参数（路径、文案、图标、选中态）都来自路由与当前路径，这里只提供对所有菜单项生效的公共参数。
 
+侧栏菜单用 [`Menu`](../components/menu.md) 的默认值（rem），跟随主题字号缩放；需要固定像素时
+显式传值，三个参数都收 `AbsoluteLength`。
+
 ### 内容区
 
-`padding_top` / `padding_right` / `padding_bottom` / `padding_left`，各自接受 `impl Into<Pixels>`。
-内容区只承载页面出口，因此没有内容槽位。
+| 方法 | 说明 |
+| --- | --- |
+| `padding(impl Into<Rems>)` | 覆盖四个方向的内边距 |
+| `padding_top` / `padding_right` / `padding_bottom` / `padding_left`（`impl Into<Rems>`） | 覆盖单边内边距 |
+| `content_background(impl Into<Hsla>)` | 覆盖内容区背景色，默认为主题的 `muted` |
+
+内容区只承载页面出口，因此没有内容槽位。长度一律用 rem（`Rems`）。
 
 ## 注意点
 

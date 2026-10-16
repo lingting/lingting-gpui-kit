@@ -2,9 +2,9 @@
 
 - 组件：`lingting-gpui-components`
   - [card](components/card.md)：卡片容器与卡片列表项，含四种选中样式。
-  - [menu](components/menu.md)：点击即跳转路由的菜单项，含两种选中样式。
+  - [menu](components/menu.md)：点击即跳转路由的菜单项，含两种选中样式；长度可 rem 可 px。
   - [sidebar](components/sidebar.md)：顶 / 中 / 底三段式侧栏。
-  - [title_bar](components/title_bar.md)：自绘标题栏，左侧图标与标题、中间内容、右侧 Windows 窗口按钮。
+  - [title_bar](components/title_bar.md)：自绘标题栏，基座拖动层加内容层（左侧图标与标题、中间内容、右侧 Windows 窗口按钮）。
   - [virtual_card](components/virtual_card.md)：卡片包一层固定高度虚拟列表。
   - [virtual_list](components/virtual_list.md)：固定行高的虚拟列表，含筛选与空状态。
 - 导航：`lingting-gpui-nav`
@@ -17,3 +17,5 @@
   - [desktop_top_layout](layout/desktop_top_layout.md)：标题栏菜单 + 内容区的桌面布局。
 - 工具：`lingting-gpui-kit`
   - [window_options_builder](kit/window_options_builder.md)：按物理像素描述窗口尺寸并构造窗口选项。
+- 核心：`lingting-gpui-core`
+  - [readme](core/readme.md)：rem 长度的快捷常量与函数。

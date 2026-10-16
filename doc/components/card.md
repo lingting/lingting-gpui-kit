@@ -74,6 +74,7 @@
 | `right_width(Rems)` | 内容自适应 | 覆盖右侧栏宽度 |
 | `selected(bool)` | `false` | 选中态 |
 | `selected_style(ItemCardSelectedStyle)` | `Tinted` | 选中样式 |
+| `hoverable(bool)` | `true` | 是否应用悬浮样式；纯展示的卡片关掉，避免被误读成可点击 |
 | `on_click(impl Fn(&mut Window, &mut App) + 'static)` | 无 | 行点击处理 |
 
 行本身可点击，因此同时也是焦点目标：`tab_stop`，Tab 能到达、Enter / Space 能激活，
@@ -88,7 +89,8 @@
 | `Accent` | `Elevated` 的底色、浅边与投影，文字换主题色并加粗 |
 | `Filled` | 主题色背景 + 反白文字，选中项整块染色，悬停时用 `primary_hover` |
 
-未选中时用 `background` 底 + `border` 边，悬停取 `secondary_hover`。
+未选中时用 `background` 底 + `border` 边，悬停取 `secondary_hover`；`hoverable(false)` 时两种
+悬停反馈都不加。
 
 `Filled` 与 `Accent` 的 `text_color` 只作为缺省值：调用方在子元素上声明的颜色优先级更高。
 

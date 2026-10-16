@@ -16,7 +16,8 @@
 ## 使用
 
 ```rust
-use lingting_gpui_layout::desktop_top_layout::{init_router, DesktopTopLayout, RouteDefinition};
+use lingting_gpui_layout::desktop_top_layout::{init_router, DesktopTopLayout};
+use lingting_gpui_layout::router::RouteDefinition;
 
 let routes = vec![
     RouteDefinition::new("/home", "首页", |_, cx| Home::new(cx)),
@@ -36,6 +37,8 @@ let layout = cx.new(|cx| DesktopTopLayout::new(cx).routes(routes));
 
 - `DesktopTopLayout`
 - `init_router(cx, default_path, routes)`：转发到布局通用的 `crate::router::init_router`
+
+`RouteDefinition` 不在本模块再导出，从 [`crate::router`](router.md) 引入。
 
 ## API
 
@@ -57,7 +60,7 @@ let layout = cx.new(|cx| DesktopTopLayout::new(cx).routes(routes));
 | --- | --- |
 | `icon(impl Fn(&mut Window, &mut App) -> AnyElement + 'static)` | 左侧图标，尺寸由调用方决定 |
 | `title(impl Into<SharedString>)` | 左侧标题 |
-| `title_bar_height(impl Into<Pixels>)` | 覆盖标题栏高度 |
+| `title_bar_height(impl Into<Pixels>)` | 覆盖标题栏高度（标题栏属于系统装饰基准层，用固定像素） |
 | `title_bar_windows(WindowsControls)` | 仅 Windows：窗口按钮的尺寸与显隐 |
 
 标题栏中间区域固定由菜单占用，因此不提供 `title_bar_center`。
@@ -66,20 +69,29 @@ let layout = cx.new(|cx| DesktopTopLayout::new(cx).routes(routes));
 
 | 方法 | 说明 |
 | --- | --- |
-| `menu_height(impl Into<Pixels>)` | 覆盖菜单项高度 |
-| `menu_icon_size(impl Into<Pixels>)` | 覆盖菜单项图标尺寸 |
+| `menu_height(impl Into<AbsoluteLength>)` | 覆盖菜单项高度，默认 `TITLE_BAR_ITEM_HEIGHT`（32px） |
+| `menu_icon_size(impl Into<AbsoluteLength>)` | 覆盖菜单项图标尺寸，默认 `TITLE_BAR_ICON_SIZE`（14px） |
+| `menu_text_size(impl Into<AbsoluteLength>)` | 覆盖菜单项字号，默认 `TITLE_BAR_TEXT_SIZE`（14px） |
 | `menu_selected_style(MenuSelectedStyle)` | 设置菜单选中样式 |
 
 菜单逐项参数都来自路由与当前路径，这里只提供对所有菜单项生效的公共参数。
 
+菜单摆在标题栏这一层，三个默认值都取 [`menu::constants`](../components/menu.md) 里的固定像素常量，
+与系统窗口装饰对齐；显式传值时以调用方为准，此时可以传 rem。
+
 ### 内容区
 
-`padding_top` / `padding_right` / `padding_bottom` / `padding_left`，各自接受 `impl Into<Pixels>`。
-内容区只承载页面出口，因此没有内容槽位。
+| 方法 | 说明 |
+| --- | --- |
+| `padding(impl Into<Rems>)` | 覆盖四个方向的内边距 |
+| `padding_top` / `padding_right` / `padding_bottom` / `padding_left`（`impl Into<Rems>`） | 覆盖单边内边距 |
+| `content_background(impl Into<Hsla>)` | 覆盖内容区背景色，默认为主题的 `muted` |
+
+内容区只承载页面出口，因此没有内容槽位。长度一律用 rem（`Rems`）。
 
 ## 注意点
 
-- 菜单只使用已注册的路由，未传入路由时中间区域为空，标题栏只剩两侧的拖动区。
-- 菜单项之间用固定间距（4px）横向排列。
+- 菜单只使用已注册的路由，未传入路由时中间区域为空，标题栏只剩基座拖动层。
+- 菜单项之间用固定间距（`MENU_GAP`，4px，属于标题栏基准层）横向排列。
 - 隐藏的路由不进入菜单，但仍可通过 `navigate` 跳转进去。
 - 菜单选中态按当前路径判定，`navigate` 引起的重绘会让选中态跟着路由走。

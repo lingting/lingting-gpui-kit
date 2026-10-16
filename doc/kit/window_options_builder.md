@@ -58,6 +58,8 @@ GPUI 的 `WindowBounds` 与 `window_min_size` 都是逻辑像素，而窗口实�
 - `traffic_light_position` 只在 macOS 且 `transparent` 为 `true` 时给出：默认把红绿灯在
   `TITLE_BAR_HEIGHT` 内垂直居中（`x = 9`，`y = (52 - 12) / 2 = 20`），可用
   `traffic_light_position` 覆盖；不透明窗口与其余平台为 `None`，由窗口系统默认摆放。
+- 红绿灯的直径与左侧留白是系统装饰基准层，用固定像素（`px()`）；高度、位置与它们一起算，
+  因此 `TITLE_BAR_HEIGHT` 也是固定像素，这一层不随主题字号缩放。
 
 ## 注意点
 
@@ -66,4 +68,5 @@ GPUI 的 `WindowBounds` 与 `window_min_size` 都是逻辑像素，而窗口实�
 - 只查询主显示器；需要指定显示器时用 `bounds` 自行传入逻辑像素矩形。
 - Windows 下由 `windows-sys` 查询主显示器（`MonitorFromPoint` + `GetMonitorInfoW` 取工作区，
   `GetDpiForMonitor(MDT_EFFECTIVE_DPI)` 取缩放）；`visible_bounds` 为空区域时同样视作查询失败。
-- 本 crate 同时再导出另外三个 crate 的全部内容，但自身只实现这一个模块。
+- 本 crate 同时再导出另外四个 crate 的全部内容（含 `lingting-gpui-core` 的 rem 档位），
+  但自身只实现这一个模块。

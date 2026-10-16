@@ -8,19 +8,33 @@
 └──────────────────┘
 ```
 
-由 `Menu::new` 建立默认值：不显示图标、高度 32px、未选中、`Elevated` 选中样式。
+由 `Menu::new` 建立默认值：不显示图标、高度 2rem、图标 0.875rem、字号 0.875rem、未选中、
+`Elevated` 选中样式。
 
 | 方法 | 默认值 | 说明 |
 | --- | --- | --- |
 | `new(path, label)` | — | `path` 既是点击后跳转的路由，也是元素 id |
 | `icon(IconName)` | 无图标 | 指定图标，未指定时不渲染 |
-| `icon_size(impl Into<Pixels>)` | `px(14.)` | 覆盖图标尺寸 |
-| `height(impl Into<Pixels>)` | `px(32.)` | 覆盖菜单项高度 |
+| `icon_size(impl Into<AbsoluteLength>)` | `ICON_SIZE`（0.875rem） | 覆盖图标尺寸 |
+| `height(impl Into<AbsoluteLength>)` | `ITEM_HEIGHT`（2rem） | 覆盖菜单项高度 |
+| `text_size(impl Into<AbsoluteLength>)` | `TEXT_SIZE`（0.875rem） | 覆盖菜单项字号 |
 | `selected(bool)` | `false` | 选中状态，通常由调用方与当前路由比较后传入 |
 | `selected_style(MenuSelectedStyle)` | `Elevated` | 选中样式 |
 
-样式：`px_4` + `gap_2` + `rounded_md` + `text_sm` + `cursor_pointer`，未选中时悬停取
-`secondary_hover`。
+样式：`px_4` + `gap_2` + `rounded_md` + 上面三项长度（高度、图标尺寸、字号）+ `cursor_pointer`，
+未选中时悬停取 `secondary_hover`。
+
+## 长度单位
+
+三个长度参数都收 `AbsoluteLength`，rem 与 px 都能传，默认值是 rem。同一组件因此覆盖两种场景：
+
+| 场景 | 取值 |
+| --- | --- |
+| 侧栏等自绘容器 | 默认值：`ITEM_HEIGHT`（2rem）、`ICON_SIZE`（0.875rem）、`TEXT_SIZE`（0.875rem），随主题字号缩放 |
+| 标题栏 | `constants::TITLE_BAR_ITEM_HEIGHT`（32px）、`TITLE_BAR_ICON_SIZE`（14px）、`TITLE_BAR_TEXT_SIZE`（14px） |
+
+标题栏与系统摆放的窗口控制按钮、红绿灯对齐，必须用固定像素；`desktop_top_layout` 已经按这三个
+常量给出默认值，调用方显式传 `menu_height` / `menu_icon_size` / `menu_text_size` 时以调用方为准。
 
 ## 选中样式
 

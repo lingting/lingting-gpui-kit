@@ -15,7 +15,7 @@ RouteDefinition::new("/home", "首页", |_, cx| Home::new(cx))
 
 | 方法 | 默认值 | 说明 |
 | --- | --- | --- |
-| `new(path, label, create)` | — | `create` 与 `Router::add_cache` 接受的形式一致；`path` 既是跳转地址，也是菜单项的稳定标识 |
+| `new(path, label, create)` | — | `create` 是页面的构造闭包，比 `Router::add_cache` 多一个 `Context<T>`，页面构造时可以立刻注册任务与订阅；`path` 既是跳转地址，也是菜单项的稳定标识 |
 | `icon(IconName)` | 无图标 | 菜单项图标 |
 | `hidden(bool)` | `false` | 隐藏菜单项；隐藏后仍可跳转进来，只是不出现在菜单里 |
 | `cache(bool)` | `true` | 是否全局缓存页面：缓存则离开再进入保留内部状态，不缓存则每次进入都是全新状态 |
@@ -23,6 +23,8 @@ RouteDefinition::new("/home", "首页", |_, cx| Home::new(cx))
 读取方法：`path()`、`label()`、`icon_name()`、`is_hidden()`、`is_cached()`、`factory()`。
 
 菜单出现在哪个区域由布局决定：`desktop_sidebar_layout` 放进侧栏，`desktop_top_layout` 放进标题栏中间。
+
+`RouteDefinition` 定义在 `lingting_gpui_layout::router`，两个布局模块都不再导出它。
 
 ## init_router
 
