@@ -1,5 +1,6 @@
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::component::StyledExt as _;
+use gpui_kit::component::Theme;
 use gpui_kit::prelude::FluentBuilder as _;
 use gpui_kit::*;
 
@@ -11,8 +12,27 @@ pub enum ItemCardSelectedStyle {
     Tinted,
     /// 浮起：主题背景色、一圈浅边与投影，视觉上从列表里浮起来。
     Elevated,
+    /// 强调：浮起的底色与投影之上，再把文字设为主题色并加粗。
+    Accent,
     /// 实底：主题色背景配反白文字，选中项整块染色。
     Filled,
+}
+
+impl ItemCardSelectedStyle {
+    /// 图标颜色。
+    ///
+    /// SVG 不继承文本颜色，图标必须由调用方显式设色；这里按样式给出取值，免得每个调用点
+    /// 自己判断选中态：未选中取 `muted_foreground`，选中时 `Filled` 取反白、其余取主题色。
+    pub fn icon_color(self, selected: bool, theme: &Theme) -> Hsla {
+        if !selected {
+            return theme.muted_foreground;
+        }
+
+        match self {
+            Self::Filled => theme.primary_foreground,
+            Self::Tinted | Self::Elevated | Self::Accent => theme.primary,
+        }
+    }
 }
 
 /// 选中项的投影。
@@ -185,6 +205,13 @@ impl RenderOnce for ItemCard {
                     .bg(cx.theme().background)
                     .border_color(cx.theme().border)
                     .shadow(selected_shadow()),
+                ItemCardSelectedStyle::Accent => this
+                    .bg(cx.theme().background)
+                    .border_color(cx.theme().border)
+                    .shadow(selected_shadow())
+                    // 调用方在子元素上声明的颜色优先级更高，这里的文字颜色只作为缺省值。
+                    .text_color(cx.theme().primary)
+                    .font_semibold(),
                 ItemCardSelectedStyle::Filled => this
                     .bg(cx.theme().primary)
                     .border_color(cx.theme().primary)

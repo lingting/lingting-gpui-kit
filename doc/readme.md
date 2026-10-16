@@ -1,7 +1,7 @@
 # 文档索引
 
 - 组件：`lingting-gpui-components`
-  - [card](components/card.md)：卡片容器与卡片列表项，含三种选中样式。
+  - [card](components/card.md)：卡片容器与卡片列表项，含四种选中样式。
   - [menu](components/menu.md)：点击即跳转路由的菜单项，含两种选中样式。
   - [sidebar](components/sidebar.md)：顶 / 中 / 底三段式侧栏。
   - [title_bar](components/title_bar.md)：自绘标题栏，左侧图标与标题、中间内容、右侧 Windows 窗口按钮。

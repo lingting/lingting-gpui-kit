@@ -85,11 +85,16 @@
 | --- | --- |
 | `Tinted`（默认） | 主题色边框 + 8% 主题色底 |
 | `Elevated` | 主题背景色 + 一圈浅边 + 投影，视觉上从列表里浮起来 |
+| `Accent` | `Elevated` 的底色、浅边与投影，文字换主题色并加粗 |
 | `Filled` | 主题色背景 + 反白文字，选中项整块染色，悬停时用 `primary_hover` |
 
 未选中时用 `background` 底 + `border` 边，悬停取 `secondary_hover`。
 
-`Filled` 的 `text_color` 只作为缺省值：调用方在子元素上声明的颜色优先级更高。
+`Filled` 与 `Accent` 的 `text_color` 只作为缺省值：调用方在子元素上声明的颜色优先级更高。
+
+`ItemCardSelectedStyle::icon_color(selected, theme)` 给出该样式下图标的取色：未选中取
+`muted_foreground`，选中时 `Filled` 取反白、其余取主题色。SVG 不继承文本颜色，图标颜色必须
+显式设在图标元素自身，调用方从该方法取值即可，不必自己判断选中态。
 
 ## 注意点
 
