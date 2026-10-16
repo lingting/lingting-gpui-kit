@@ -53,6 +53,7 @@ pub struct DesktopTopLayout {
     menu_icon_size: Option<Pixels>,
     menu_selected_style: MenuSelectedStyle,
     padding: Edges<Pixels>,
+    content_background: Option<Hsla>,
 }
 
 impl DesktopTopLayout {
@@ -72,7 +73,8 @@ impl DesktopTopLayout {
             menu_height: None,
             menu_icon_size: None,
             menu_selected_style: MenuSelectedStyle::default(),
-            padding: Edges::all(crate::content::DEFAULT_PADDING),
+            padding: crate::content::default_padding(),
+            content_background: None,
         }
     }
 
