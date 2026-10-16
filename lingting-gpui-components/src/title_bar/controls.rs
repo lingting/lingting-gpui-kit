@@ -79,8 +79,8 @@ pub(crate) fn window_controls(
         div()
             .flex()
             .flex_row()
-            .items_center()
             .h_full()
+            .items_stretch()
             .flex_shrink_0()
             .child(button(
                 "window-minimize",

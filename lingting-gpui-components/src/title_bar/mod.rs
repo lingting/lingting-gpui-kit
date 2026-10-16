@@ -83,6 +83,7 @@ impl RenderOnce for TitleBar {
         let controls: Option<AnyElement> = None;
 
         div()
+            .relative()
             .flex()
             .flex_row()
             .items_center()
@@ -92,6 +93,10 @@ impl RenderOnce for TitleBar {
             .bg(cx.theme().title_bar)
             .border_b_1()
             .border_color(cx.theme().title_bar_border)
+            // 基座拖动层最先渲染：铺满整条，盖住左侧区域与中间内容两侧的空白，
+            // 也补上右侧窗口按钮之外的空档。拖动与双击最大化由平台按 `HTCAPTION`
+            // 处理，不需要自己绑定事件。
+            .child(drag_base())
             .children(left::left(self.icon, self.title))
             .child(
                 div()
@@ -99,21 +104,29 @@ impl RenderOnce for TitleBar {
                     .min_w_0()
                     .flex()
                     .items_center()
-                    .child(drag_spacer("title-bar-drag-left"))
-                    .children(self.center)
-                    .child(drag_spacer("title-bar-drag-right")),
+                    // 两层遮挡只截断命中测试，自身不注册命中盒；鼠标落在 `center` 上时，
+                    // 命中的是内容自己的命中盒，`center` 之外的空白回落到基座拖动层。
+                    .child(div().occlude().flex().items_center().children(self.center))
+                    .child(div().occlude().flex_1().min_w_0()),
             )
-            .children(controls)
+            .children(controls.map(|controls| {
+                div()
+                    .occlude()
+                    .flex()
+                    .items_stretch()
+                    .h_full()
+                    .child(controls)
+            }))
             .into_any_element()
     }
 }
 
-/// 中间内容两侧的空白拖动区。
-fn drag_spacer(id: &'static str) -> AnyElement {
+/// 整条标题栏的基座拖动层。
+fn drag_base() -> AnyElement {
     div()
-        .id(id)
-        .flex_1()
-        .h_full()
+        .id("title-bar-drag-base")
+        .absolute()
+        .inset_0()
         .window_control_area(WindowControlArea::Drag)
         .into_any_element()
 }
