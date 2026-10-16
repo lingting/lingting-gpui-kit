@@ -2,13 +2,13 @@ use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::*;
 
 /// 内容区上下内边距默认值。
-pub(crate) const DEFAULT_PADDING_VERTICAL: Pixels = px(12.);
+pub(crate) const DEFAULT_PADDING_VERTICAL: Rems = rems(0.75);
 
 /// 内容区左右内边距默认值。
-pub(crate) const DEFAULT_PADDING_HORIZONTAL: Pixels = px(16.);
+pub(crate) const DEFAULT_PADDING_HORIZONTAL: Rems = rems(1.);
 
 /// 内容区默认内边距：上下与左右分别取值。
-pub(crate) fn default_padding() -> Edges<Pixels> {
+pub(crate) fn default_padding() -> Edges<Rems> {
     Edges {
         top: DEFAULT_PADDING_VERTICAL,
         right: DEFAULT_PADDING_HORIZONTAL,
@@ -30,10 +30,10 @@ pub(crate) fn default_padding() -> Edges<Pixels> {
 #[derive(IntoElement)]
 pub struct Content {
     background: Option<Hsla>,
-    padding_top: Pixels,
-    padding_right: Pixels,
-    padding_bottom: Pixels,
-    padding_left: Pixels,
+    padding_top: Rems,
+    padding_right: Rems,
+    padding_bottom: Rems,
+    padding_left: Rems,
     children: Vec<AnyElement>,
 }
 
@@ -59,7 +59,7 @@ impl Content {
     }
 
     /// 覆盖四个方向的内边距。
-    pub fn padding(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding(mut self, padding: impl Into<Rems>) -> Self {
         let padding = padding.into();
         self.padding_top = padding;
         self.padding_right = padding;
@@ -69,25 +69,25 @@ impl Content {
     }
 
     /// 覆盖上内边距。
-    pub fn padding_top(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding_top(mut self, padding: impl Into<Rems>) -> Self {
         self.padding_top = padding.into();
         self
     }
 
     /// 覆盖右内边距。
-    pub fn padding_right(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding_right(mut self, padding: impl Into<Rems>) -> Self {
         self.padding_right = padding.into();
         self
     }
 
     /// 覆盖下内边距。
-    pub fn padding_bottom(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding_bottom(mut self, padding: impl Into<Rems>) -> Self {
         self.padding_bottom = padding.into();
         self
     }
 
     /// 覆盖左内边距。
-    pub fn padding_left(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding_left(mut self, padding: impl Into<Rems>) -> Self {
         self.padding_left = padding.into();
         self
     }

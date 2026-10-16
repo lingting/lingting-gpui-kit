@@ -22,6 +22,8 @@ impl DesktopSidebarLayout {
     }
 
     /// 覆盖标题栏高度。
+    ///
+    /// 标题栏与系统窗口装饰对齐，因此这里收 `Pixels` 而不是 `Rems`。
     pub fn title_bar_height(mut self, height: impl Into<Pixels>) -> Self {
         self.title_bar_height = Some(height.into());
         self

@@ -5,61 +5,24 @@ use gpui_kit::*;
 
 use lingting_gpui_nav::navigate;
 
-/// 图标尺寸默认值。
-const ICON_SIZE: Pixels = px(14.);
-
-/// 菜单项高度默认值。
-const ITEM_HEIGHT: Pixels = px(32.);
-
-/// 菜单项字号档位。
-///
-/// 档位对应 GPUI 的 `text_xs` / `text_sm` / `text_base` / `text_lg` / `text_xl`，单位是 rem，
-/// 因此跟随主题字号缩放；[`Custom`](Self::Custom) 用具体像素值，脱离该缩放。
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub enum MenuTextSize {
-    /// `text_xs`，0.75rem。
-    XSmall,
-    /// `text_sm`，0.875rem。
-    #[default]
-    Small,
-    /// `text_base`，1rem。
-    Base,
-    /// `text_lg`，1.125rem。
-    Large,
-    /// `text_xl`，1.25rem。
-    XLarge,
-    /// 具体像素值，不随主题字号缩放。
-    Custom(Pixels),
-}
-
-impl From<Pixels> for MenuTextSize {
-    fn from(size: Pixels) -> Self {
-        Self::Custom(size)
-    }
-}
-
-/// 选中项样式。
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub enum MenuSelectedStyle {
-    /// 浮起：主题背景色、一圈浅边与投影，视觉上从标题栏里浮起来。
-    #[default]
-    Elevated,
-    /// 实底：主题色背景配反白文字与图标，选中项整块染色。
-    Filled,
-}
+use super::constants::{ICON_SIZE, ITEM_HEIGHT, TEXT_SIZE};
+use super::selected_style::{MenuSelectedStyle, selected_shadow};
 
 /// 标题栏菜单项。
 ///
-/// 由 [`Menu::new`] 建立默认值：不显示图标、高度 32px、字号跟随 `text_sm`、未选中、
+/// 由 [`Menu::new`] 建立默认值：不显示图标、高度 2rem、字号 `text_sm`、未选中、
 /// [`MenuSelectedStyle::Elevated`]，再按需覆盖其中部分。
+///
+/// 长度参数收 [`AbsoluteLength`]，rem 与像素都能传，默认用 rem；放进标题栏时改传
+/// `px()`，见 [`TITLE_BAR_ITEM_HEIGHT`](super::constants::TITLE_BAR_ITEM_HEIGHT)。
 #[derive(IntoElement)]
 pub struct Menu {
     path: SharedString,
     label: SharedString,
     icon: Option<IconName>,
-    icon_size: Pixels,
-    height: Pixels,
-    text_size: MenuTextSize,
+    icon_size: AbsoluteLength,
+    height: AbsoluteLength,
+    text_size: AbsoluteLength,
     selected: bool,
     selected_style: MenuSelectedStyle,
 }
@@ -73,9 +36,9 @@ impl Menu {
             path: path.into(),
             label: label.into(),
             icon: None,
-            icon_size: ICON_SIZE,
-            height: ITEM_HEIGHT,
-            text_size: MenuTextSize::default(),
+            icon_size: ICON_SIZE.into(),
+            height: ITEM_HEIGHT.into(),
+            text_size: TEXT_SIZE.into(),
             selected: false,
             selected_style: MenuSelectedStyle::default(),
         }
@@ -88,21 +51,19 @@ impl Menu {
     }
 
     /// 覆盖图标尺寸。
-    pub fn icon_size(mut self, size: impl Into<Pixels>) -> Self {
+    pub fn icon_size(mut self, size: impl Into<AbsoluteLength>) -> Self {
         self.icon_size = size.into();
         self
     }
 
     /// 覆盖菜单项高度。
-    pub fn height(mut self, height: impl Into<Pixels>) -> Self {
+    pub fn height(mut self, height: impl Into<AbsoluteLength>) -> Self {
         self.height = height.into();
         self
     }
 
-    /// 覆盖菜单项字号。
-    ///
-    /// 传 [`MenuTextSize`] 档位（跟随主题字号缩放），或直接传 `Pixels` 用固定像素值。
-    pub fn text_size(mut self, size: impl Into<MenuTextSize>) -> Self {
+    /// 覆盖菜单项字号，默认为 `text_sm`。
+    pub fn text_size(mut self, size: impl Into<AbsoluteLength>) -> Self {
         self.text_size = size.into();
         self
     }
@@ -118,20 +79,6 @@ impl Menu {
         self.selected_style = style;
         self
     }
-}
-
-/// 选中项的投影。
-///
-/// GPUI 的 `blur_radius` 是高斯标准差，而 CSS 的 blur 是它的两倍，
-/// 照搬 Tailwind 的半径会糊成一片灰雾，因此这里取一半的半径。
-fn selected_shadow() -> Vec<BoxShadow> {
-    let ink = hsla(0., 0., 0., 0.1);
-    vec![
-        BoxShadow::new(px(0.), px(1.), ink).blur_radius(px(1.5)),
-        BoxShadow::new(px(0.), px(2.), ink)
-            .blur_radius(px(2.))
-            .spread_radius(px(-1.)),
-    ]
 }
 
 impl RenderOnce for Menu {
@@ -154,14 +101,7 @@ impl RenderOnce for Menu {
             .px_4()
             .h(self.height)
             .rounded_md()
-            .map(|this| match self.text_size {
-                MenuTextSize::XSmall => this.text_xs(),
-                MenuTextSize::Small => this.text_sm(),
-                MenuTextSize::Base => this.text_base(),
-                MenuTextSize::Large => this.text_lg(),
-                MenuTextSize::XLarge => this.text_xl(),
-                MenuTextSize::Custom(size) => this.text_size(size),
-            })
+            .text_size(self.text_size)
             .cursor_pointer()
             .when(self.selected, |this| match self.selected_style {
                 MenuSelectedStyle::Elevated => this

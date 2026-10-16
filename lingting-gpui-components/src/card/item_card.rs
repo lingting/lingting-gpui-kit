@@ -39,6 +39,8 @@ impl ItemCardSelectedStyle {
 ///
 /// GPUI 的 `blur_radius` 是高斯标准差，而 CSS 的 blur 是它的两倍，
 /// 照搬 Tailwind 的半径会糊成一片灰雾，因此这里取一半的半径。
+///
+/// `BoxShadow` 的偏移、模糊与扩散半径在 GPUI 里就是 `Pixels`，只能用 `px()`。
 fn selected_shadow() -> Vec<BoxShadow> {
     let ink = hsla(0., 0., 0., 0.1);
     vec![

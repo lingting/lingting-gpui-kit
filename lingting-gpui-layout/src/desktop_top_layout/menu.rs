@@ -1,6 +1,9 @@
 use gpui_kit::*;
 
-use lingting_gpui_components::menu::{Menu, MenuSelectedStyle, MenuTextSize};
+use lingting_gpui_components::menu::{
+    Menu, MenuSelectedStyle,
+    constants::{TITLE_BAR_ICON_SIZE, TITLE_BAR_ITEM_HEIGHT, TITLE_BAR_TEXT_SIZE},
+};
 use lingting_gpui_nav::current_path;
 
 use super::DesktopTopLayout;
@@ -11,21 +14,19 @@ use super::DesktopTopLayout;
 /// （路径、文案、图标、选中态）来自路由与当前路径，这里只提供对所有菜单项生效的公共参数。
 impl DesktopTopLayout {
     /// 覆盖菜单项高度。
-    pub fn menu_height(mut self, height: impl Into<Pixels>) -> Self {
+    pub fn menu_height(mut self, height: impl Into<AbsoluteLength>) -> Self {
         self.menu_height = Some(height.into());
         self
     }
 
     /// 覆盖菜单项图标尺寸。
-    pub fn menu_icon_size(mut self, size: impl Into<Pixels>) -> Self {
+    pub fn menu_icon_size(mut self, size: impl Into<AbsoluteLength>) -> Self {
         self.menu_icon_size = Some(size.into());
         self
     }
 
     /// 覆盖菜单项字号。
-    ///
-    /// 传 [`MenuTextSize`] 档位（跟随主题字号缩放），或直接传 `Pixels` 用固定像素值。
-    pub fn menu_text_size(mut self, size: impl Into<MenuTextSize>) -> Self {
+    pub fn menu_text_size(mut self, size: impl Into<AbsoluteLength>) -> Self {
         self.menu_text_size = Some(size.into());
         self
     }
@@ -52,15 +53,12 @@ impl DesktopTopLayout {
                 if let Some(icon) = route.icon_name() {
                     menu = menu.icon(icon);
                 }
-                if let Some(height) = self.menu_height {
-                    menu = menu.height(height);
-                }
-                if let Some(size) = self.menu_icon_size {
-                    menu = menu.icon_size(size);
-                }
-                if let Some(size) = self.menu_text_size {
-                    menu = menu.text_size(size);
-                }
+                // 菜单摆在标题栏这一层，默认值跟着标题栏用固定像素；
+                // 调用方显式传过就以调用方为准。
+                menu = menu
+                    .height(self.menu_height.unwrap_or(TITLE_BAR_ITEM_HEIGHT.into()))
+                    .icon_size(self.menu_icon_size.unwrap_or(TITLE_BAR_ICON_SIZE.into()))
+                    .text_size(self.menu_text_size.unwrap_or(TITLE_BAR_TEXT_SIZE.into()));
                 menu
             })
             .collect()

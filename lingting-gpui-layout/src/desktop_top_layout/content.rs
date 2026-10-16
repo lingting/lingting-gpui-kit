@@ -9,31 +9,31 @@ use super::DesktopTopLayout;
 /// 内容区只承载页面出口，因此这里不提供内容槽位，只提供内边距与背景色。
 impl DesktopTopLayout {
     /// 覆盖内容区四个方向的内边距。
-    pub fn padding(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding(mut self, padding: impl Into<Rems>) -> Self {
         self.padding = Edges::all(padding.into());
         self
     }
 
     /// 覆盖内容区上内边距。
-    pub fn padding_top(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding_top(mut self, padding: impl Into<Rems>) -> Self {
         self.padding.top = padding.into();
         self
     }
 
     /// 覆盖内容区右内边距。
-    pub fn padding_right(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding_right(mut self, padding: impl Into<Rems>) -> Self {
         self.padding.right = padding.into();
         self
     }
 
     /// 覆盖内容区下内边距。
-    pub fn padding_bottom(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding_bottom(mut self, padding: impl Into<Rems>) -> Self {
         self.padding.bottom = padding.into();
         self
     }
 
     /// 覆盖内容区左内边距。
-    pub fn padding_left(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding_left(mut self, padding: impl Into<Rems>) -> Self {
         self.padding.left = padding.into();
         self
     }

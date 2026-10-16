@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "lingting-gpui-components",
+    "lingting-gpui-core",
     "lingting-gpui-kit",
     "lingting-gpui-layout",
     "lingting-gpui-nav",
@@ -22,6 +23,7 @@ description = "lingting network control"
 
 lingting-gpui-kit = { path = "lingting-gpui-kit" }
 lingting-gpui-components = { path = "lingting-gpui-components" }
+lingting-gpui-core = { path = "lingting-gpui-core" }
 lingting-gpui-layout = { path = "lingting-gpui-layout" }
 lingting-gpui-nav = { path = "lingting-gpui-nav" }
 

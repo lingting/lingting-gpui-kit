@@ -9,6 +9,8 @@ use lingting_gpui_components::title_bar::TitleBar;
 use super::DesktopTopLayout;
 
 /// 菜单项之间的间距。
+///
+/// 菜单直接摆在标题栏这一层，跟着标题栏用固定像素，避免与系统窗口装饰的基准错开。
 const MENU_GAP: Pixels = px(4.);
 
 /// 标题栏的配置与渲染。
@@ -28,6 +30,8 @@ impl DesktopTopLayout {
     }
 
     /// 覆盖标题栏高度。
+    ///
+    /// 标题栏与系统窗口装饰对齐，因此这里收 `Pixels` 而不是 `Rems`。
     pub fn title_bar_height(mut self, height: impl Into<Pixels>) -> Self {
         self.title_bar_height = Some(height.into());
         self

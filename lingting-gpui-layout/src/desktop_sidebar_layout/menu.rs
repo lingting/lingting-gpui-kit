@@ -1,6 +1,6 @@
 use gpui_kit::*;
 
-use lingting_gpui_components::menu::{Menu, MenuSelectedStyle, MenuTextSize};
+use lingting_gpui_components::menu::{Menu, MenuSelectedStyle};
 use lingting_gpui_nav::current_path;
 
 use super::DesktopSidebarLayout;
@@ -11,21 +11,19 @@ use super::DesktopSidebarLayout;
 /// 路由与当前路径，这里只提供对所有菜单项生效的公共参数。
 impl DesktopSidebarLayout {
     /// 覆盖菜单项高度。
-    pub fn menu_height(mut self, height: impl Into<Pixels>) -> Self {
+    pub fn menu_height(mut self, height: impl Into<AbsoluteLength>) -> Self {
         self.menu_height = Some(height.into());
         self
     }
 
     /// 覆盖菜单项图标尺寸。
-    pub fn menu_icon_size(mut self, size: impl Into<Pixels>) -> Self {
+    pub fn menu_icon_size(mut self, size: impl Into<AbsoluteLength>) -> Self {
         self.menu_icon_size = Some(size.into());
         self
     }
 
     /// 覆盖菜单项字号。
-    ///
-    /// 传 [`MenuTextSize`] 档位（跟随主题字号缩放），或直接传 `Pixels` 用固定像素值。
-    pub fn menu_text_size(mut self, size: impl Into<MenuTextSize>) -> Self {
+    pub fn menu_text_size(mut self, size: impl Into<AbsoluteLength>) -> Self {
         self.menu_text_size = Some(size.into());
         self
     }

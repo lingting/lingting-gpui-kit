@@ -9,9 +9,14 @@ use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::*;
 
 /// 未指定高度时使用的默认标题栏高度。
+///
+/// 标题栏与系统窗口装饰对齐（Windows 窗口控制按钮、macOS 红绿灯），因此这一层用固定像素，
+/// 不随主题字号缩放：跟随字号会让自绘标题栏与系统摆放的按钮错位。
 pub const TITLE_BAR_HEIGHT: Pixels = px(52.);
 
 /// 未指定间距时使用的默认间距，用于隔开内容层的左侧、中间、右侧三个区域。
+///
+/// 与 [`TITLE_BAR_HEIGHT`] 同属系统基准层，用固定像素。
 pub const TITLE_BAR_GAP: Pixels = px(4.);
 
 /// 标题栏。

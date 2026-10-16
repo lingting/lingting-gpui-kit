@@ -11,5 +11,6 @@ license.workspace = true
 description.workspace = true
 
 [dependencies]
+lingting-gpui-core.workspace = true
 lingting-gpui-nav.workspace = true
 gpui-kit = { workspace = true }

@@ -3,6 +3,9 @@ use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::*;
 
 /// 未指定宽度时使用的按钮宽度。
+///
+/// 窗口控制按钮由系统按固定像素摆放，这里跟随 [`TITLE_BAR_HEIGHT`](crate::title_bar::TITLE_BAR_HEIGHT)
+/// 的基准，用固定像素。
 const DEFAULT_WIDTH: Pixels = px(46.);
 
 /// 未指定尺寸时使用的图标尺寸。

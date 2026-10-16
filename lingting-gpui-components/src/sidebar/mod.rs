@@ -8,28 +8,28 @@ use gpui_kit::prelude::FluentBuilder as _;
 use gpui_kit::*;
 
 /// 侧栏宽度。
-const SIDEBAR_WIDTH: Pixels = px(220.);
+const SIDEBAR_WIDTH: Rems = rems(13.75);
 
 /// 侧栏内边距。
-const SIDEBAR_PADDING: Pixels = px(8.);
+const SIDEBAR_PADDING: Rems = rems(0.5);
 
 /// 顶部段最大高度默认值。
-pub const TOP_MAX_HEIGHT: Pixels = px(160.);
+pub const TOP_MAX_HEIGHT: Rems = rems(10.);
 
 /// 底部段最大高度默认值。
-pub const BOTTOM_MAX_HEIGHT: Pixels = px(160.);
+pub const BOTTOM_MAX_HEIGHT: Rems = rems(10.);
 
 /// 侧栏。
 ///
 /// 由 [`Sidebar::new`] 建立默认值，再按需覆盖宽度、内边距与顶部 / 底部段的最大高度。
 #[derive(IntoElement)]
 pub struct Sidebar {
-    width: Pixels,
-    padding: Pixels,
+    width: Rems,
+    padding: Rems,
     /// 顶部段最大高度，`None` 表示自适应。
-    top_max_height: Option<Pixels>,
+    top_max_height: Option<Rems>,
     /// 底部段最大高度，`None` 表示自适应。
-    bottom_max_height: Option<Pixels>,
+    bottom_max_height: Option<Rems>,
     top: Vec<AnyElement>,
     middle: Vec<AnyElement>,
     bottom: Vec<AnyElement>,
@@ -51,7 +51,7 @@ impl Sidebar {
     }
 
     /// 覆盖侧栏宽度，默认为 [`SIDEBAR_WIDTH`]。
-    pub fn width(mut self, width: impl Into<Pixels>) -> Self {
+    pub fn width(mut self, width: impl Into<Rems>) -> Self {
         self.width = width.into();
         self
     }
@@ -59,13 +59,13 @@ impl Sidebar {
     /// 覆盖侧栏内边距，默认为 [`SIDEBAR_PADDING`]。
     ///
     /// 三段与侧栏边缘之间的距离都来自这个值，段与段之间的距离不随它变化。
-    pub fn padding(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn padding(mut self, padding: impl Into<Rems>) -> Self {
         self.padding = padding.into();
         self
     }
 
     /// 覆盖顶部段最大高度，默认为 [`TOP_MAX_HEIGHT`]。
-    pub fn top_max_height(mut self, height: impl Into<Pixels>) -> Self {
+    pub fn top_max_height(mut self, height: impl Into<Rems>) -> Self {
         self.top_max_height = Some(height.into());
         self
     }
@@ -77,7 +77,7 @@ impl Sidebar {
     }
 
     /// 覆盖底部段最大高度，默认为 [`BOTTOM_MAX_HEIGHT`]。
-    pub fn bottom_max_height(mut self, height: impl Into<Pixels>) -> Self {
+    pub fn bottom_max_height(mut self, height: impl Into<Rems>) -> Self {
         self.bottom_max_height = Some(height.into());
         self
     }

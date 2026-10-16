@@ -1,5 +1,4 @@
-// 各区域的配置方法与渲染助手分文件实现：本文件是类型本身与整体组装，
-// 标题栏、侧栏、菜单、内容区分别在 title_bar、sidebar、menu、content 中。
+/// 各区域的配置方法与渲染助手分文件实现，本文件是类型本身与整体组装。
 mod content;
 mod menu;
 mod route;
@@ -16,7 +15,7 @@ use gpui_kit::*;
 
 use crate::router::RouteDefinition;
 use crate::slot::SlotRenderer;
-use lingting_gpui_components::menu::{MenuSelectedStyle, MenuTextSize};
+use lingting_gpui_components::menu::MenuSelectedStyle;
 use lingting_gpui_components::sidebar::{BOTTOM_MAX_HEIGHT, TOP_MAX_HEIGHT};
 use lingting_gpui_nav::Outlet;
 
@@ -48,23 +47,24 @@ use lingting_gpui_nav::Outlet;
 pub struct DesktopSidebarLayout {
     outlet: Entity<Outlet>,
     routes: Rc<Vec<RouteDefinition>>,
+    /// 标题栏高度，与系统窗口装饰对齐，用固定像素。
     title_bar_height: Option<Pixels>,
     title_bar_icon: Option<SlotRenderer>,
     title: Option<SharedString>,
     title_bar_center: Option<SlotRenderer>,
     #[cfg(target_os = "windows")]
     title_bar_windows: lingting_gpui_components::title_bar::WindowsControls,
-    sidebar_width: Option<Pixels>,
-    sidebar_padding: Option<Pixels>,
+    sidebar_width: Option<Rems>,
+    sidebar_padding: Option<Rems>,
     sidebar_top: Option<SlotRenderer>,
-    sidebar_top_max_height: Option<Pixels>,
+    sidebar_top_max_height: Option<Rems>,
     sidebar_bottom: Option<SlotRenderer>,
-    sidebar_bottom_max_height: Option<Pixels>,
-    menu_height: Option<Pixels>,
-    menu_icon_size: Option<Pixels>,
-    menu_text_size: Option<MenuTextSize>,
+    sidebar_bottom_max_height: Option<Rems>,
+    menu_height: Option<AbsoluteLength>,
+    menu_icon_size: Option<AbsoluteLength>,
+    menu_text_size: Option<AbsoluteLength>,
     menu_selected_style: MenuSelectedStyle,
-    padding: Edges<Pixels>,
+    padding: Edges<Rems>,
     content_background: Option<Hsla>,
 }
 

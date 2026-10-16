@@ -12,13 +12,13 @@ use super::DesktopSidebarLayout;
 /// 中间段固定由本布局的菜单填充，因此这里不提供 middle 配置。
 impl DesktopSidebarLayout {
     /// 覆盖侧栏宽度。
-    pub fn sidebar_width(mut self, width: impl Into<Pixels>) -> Self {
+    pub fn sidebar_width(mut self, width: impl Into<Rems>) -> Self {
         self.sidebar_width = Some(width.into());
         self
     }
 
     /// 覆盖侧栏内边距。
-    pub fn sidebar_padding(mut self, padding: impl Into<Pixels>) -> Self {
+    pub fn sidebar_padding(mut self, padding: impl Into<Rems>) -> Self {
         self.sidebar_padding = Some(padding.into());
         self
     }
@@ -33,7 +33,7 @@ impl DesktopSidebarLayout {
     }
 
     /// 覆盖侧栏顶部段的最大高度。
-    pub fn sidebar_top_max_height(mut self, height: impl Into<Pixels>) -> Self {
+    pub fn sidebar_top_max_height(mut self, height: impl Into<Rems>) -> Self {
         self.sidebar_top_max_height = Some(height.into());
         self
     }
@@ -54,7 +54,7 @@ impl DesktopSidebarLayout {
     }
 
     /// 覆盖侧栏底部段的最大高度。
-    pub fn sidebar_bottom_max_height(mut self, height: impl Into<Pixels>) -> Self {
+    pub fn sidebar_bottom_max_height(mut self, height: impl Into<Rems>) -> Self {
         self.sidebar_bottom_max_height = Some(height.into());
         self
     }
