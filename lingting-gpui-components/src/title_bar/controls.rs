@@ -56,12 +56,29 @@ impl Default for WindowsControls {
     }
 }
 
-/// 窗口控制按钮组。配置为不渲染时返回 `None`。
+/// 窗口控制按钮组，已套好遮挡层。配置为不渲染时返回 `None`。
+///
+/// 遮挡层在按钮处截断命中测试，使标题栏的基座拖动层不参与该区域的命中，
+/// 按钮的 `WindowControlArea` 才会被平台取到。它用 `items_stretch` 让按钮组撑满
+/// 标题栏高度，按钮自身的 `h_full()` 随之拿到确定高度。
 pub(crate) fn window_controls(
     window: &Window,
     controls: &WindowsControls,
     cx: &App,
 ) -> Option<AnyElement> {
+    buttons(window, controls, cx).map(|buttons| {
+        div()
+            .occlude()
+            .flex()
+            .items_stretch()
+            .h_full()
+            .child(buttons)
+            .into_any_element()
+    })
+}
+
+/// 三个按钮本身。
+fn buttons(window: &Window, controls: &WindowsControls, cx: &App) -> Option<AnyElement> {
     if !controls.is_visible() {
         return None;
     }
