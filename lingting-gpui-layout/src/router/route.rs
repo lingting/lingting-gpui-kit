@@ -25,7 +25,7 @@ pub struct RouteDefinition {
 impl RouteDefinition {
     /// 创建一条路由。
     ///
-    /// `create` 是页面的构造闭包，与 [`lingting_gpui_nav::Router::add_cache`] 接受的形式一致；
+    /// `create` 是页面的构造闭包，比 [`lingting_gpui_nav::Router::add_cache`] 多一个 `Context<T>`，页面构造时可以立刻注册任务与订阅；
     /// `path` 既是跳转地址，也是菜单项的稳定标识。
     pub fn new<T, F>(
         path: impl Into<SharedString>,
@@ -34,7 +34,7 @@ impl RouteDefinition {
     ) -> Self
     where
         T: Render + 'static,
-        F: Fn(&mut Window, &mut App) -> T + 'static,
+        F: Fn(&mut Window, &mut Context<T>) -> T + 'static,
     {
         Self {
             path: path.into(),
