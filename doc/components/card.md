@@ -14,8 +14,9 @@
 └──────────────────────────────┘
 ```
 
-默认铺满可用空间（`size_full` + `min_h_0` + `overflow_hidden`），圆角 `rounded_lg`；
-非 ghost 模式下绘制背景、一圈边框，主题开启阴影时再加 `shadow_sm`。
+尺寸默认 `auto`：不声明尺寸，由内容与父布局决定。另有 `min_h_0` 与 `overflow_hidden`：
+高度被显式限制（`size_full` / `height_full` / `height` / `size`）时，卡片按声明的高度收缩，不被内容撑破。
+圆角 `rounded_lg`；非 ghost 模式下绘制背景、一圈边框，主题开启阴影时再加 `shadow_sm`。
 
 `Card` 是 `IntoElement`，同时也是 `ParentElement`：用 `Styled` 与 `child` / `children` 直接写内容。
 
@@ -28,6 +29,23 @@
 | `title_padding(Rems)` | `rems(0.5)` | 标题区内边距 |
 | `content_padding(Rems)` | `rems(0.)` | 内容区内边距，默认 0，由内容自己决定 |
 | `gap(Rems)` | `rems(0.5)` | 标题区与内容区之间的间隔 |
+
+### 尺寸
+
+| 方法 | 默认值 | 说明 |
+| --- | --- | --- |
+| `size_full()` | — | 高度与宽度都铺满可用空间（100%） |
+| `size_auto()` | — | 高度与宽度都不声明，由内容与父布局决定 |
+| `size(Rems, Rems)` | — | 同时设置宽度与高度为固定长度，参数顺序是宽、高 |
+| `height(Rems)` | `auto` | 固定高度 |
+| `height_full()` | — | 高度铺满可用空间（100%） |
+| `height_auto()` | — | 高度不声明，由内容与父布局决定 |
+| `width(Rems)` | `auto` | 固定宽度 |
+| `width_full()` | — | 宽度铺满可用空间（100%） |
+| `width_auto()` | — | 宽度不声明，由内容与父布局决定 |
+
+尺寸在用户样式之后应用，`size_full` / `size_auto` 与 `Styled` 上的同名方法取值一致，
+无需再在 `Styled` 上重复声明；但 `Styled` 上的单边样式（如 `h_full()`）仍会被内部尺寸覆盖。
 
 内容区只负责给出剩余高度（`flex_1`）：内容声明 `size_full` 或 `flex_1` 时铺满，
 未声明时按自身高度排布，不会被拉伸。
@@ -76,6 +94,7 @@
 ## 注意点
 
 - 选中是持久状态，用元素自身的底色与边框表达，不用单侧边条。
-- 两者的 `Styled` 都作用在内部容器上，且多数布局属性（`size_full`、`rounded_*`、`border_1`、
+- 两者的 `Styled` 都作用在内部容器上，且多数布局属性（尺寸、`rounded_*`、`border_1`、
   选中态的底色与边框等）在用户样式之后应用；用户样式主要用来覆盖内边距、间距，以及 ghost 下的底色。
+  尺寸优先用 `Card` 自己的 `size_*` / `height_*` / `width_*` 方法声明。
 - `ItemCard` 需要 `id` 稳定；同一个 `id` 复用焦点状态，列表里用下标会让焦点跟着滚动错位。

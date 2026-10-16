@@ -24,7 +24,8 @@ impl<T: 'static> VirtualCard<T> {
     /// 创建卡片。`id` 用于列表滚动状态的稳定标识。
     pub fn new(id: impl Into<ElementId>) -> Self {
         Self {
-            card: Card::new(),
+            // 虚拟列表必须有确定高度才能计算可视区，因此卡片默认铺满而不是 auto。
+            card: Card::new().size_full(),
             id: id.into(),
             items: Rc::new(Vec::new()),
             item_height: rems(4.),
@@ -33,6 +34,60 @@ impl<T: 'static> VirtualCard<T> {
             empty: None,
             style: StyleRefinement::default(),
         }
+    }
+
+    /// 卡片高度与宽度都铺满可用空间（100%），默认值。
+    pub fn card_size_full(mut self) -> Self {
+        self.card = self.card.size_full();
+        self
+    }
+
+    /// 卡片高度与宽度都不声明，由内容与父布局决定。
+    pub fn card_size_auto(mut self) -> Self {
+        self.card = self.card.size_auto();
+        self
+    }
+
+    /// 同时设置卡片的宽度与高度为固定长度。
+    pub fn card_size(mut self, width: Rems, height: Rems) -> Self {
+        self.card = self.card.size(width, height);
+        self
+    }
+
+    /// 设置卡片高度为固定长度。
+    pub fn card_height(mut self, height: Rems) -> Self {
+        self.card = self.card.height(height);
+        self
+    }
+
+    /// 卡片高度铺满可用空间（100%），默认值。
+    pub fn card_height_full(mut self) -> Self {
+        self.card = self.card.height_full();
+        self
+    }
+
+    /// 卡片高度不声明，由内容与父布局决定。
+    pub fn card_height_auto(mut self) -> Self {
+        self.card = self.card.height_auto();
+        self
+    }
+
+    /// 设置卡片宽度为固定长度。
+    pub fn card_width(mut self, width: Rems) -> Self {
+        self.card = self.card.width(width);
+        self
+    }
+
+    /// 卡片宽度铺满可用空间（100%），默认值。
+    pub fn card_width_full(mut self) -> Self {
+        self.card = self.card.width_full();
+        self
+    }
+
+    /// 卡片宽度不声明，由内容与父布局决定。
+    pub fn card_width_auto(mut self) -> Self {
+        self.card = self.card.width_auto();
+        self
     }
 
     /// 设置 ghost 模式，透传给 [`Card`]。

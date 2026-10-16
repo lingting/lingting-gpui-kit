@@ -1,7 +1,6 @@
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::prelude::FluentBuilder as _;
 use gpui_kit::*;
-
 /// 标题区默认内边距。
 const TITLE_PADDING: Rems = rems(0.5);
 
@@ -16,6 +15,8 @@ const TITLE_GAP: Rems = rems(0.5);
 pub struct Card {
     base: Div,
     ghost: bool,
+    height: Length,
+    width: Length,
     title_padding: Rems,
     content_padding: Rems,
     gap: Rems,
@@ -28,12 +29,67 @@ impl Card {
         Self {
             base: div(),
             ghost: false,
+            height: Length::Auto,
+            width: Length::Auto,
             title_padding: TITLE_PADDING,
             content_padding: CONTENT_PADDING,
             gap: TITLE_GAP,
             title: None,
             children: Vec::new(),
         }
+    }
+
+    /// 高度与宽度都铺满可用空间（100%）。
+    pub fn size_full(self) -> Self {
+        self.height_full().width_full()
+    }
+
+    /// 高度与宽度都不声明，由内容与父布局决定。默认值。
+    pub fn size_auto(self) -> Self {
+        self.height_auto().width_auto()
+    }
+
+    /// 同时设置高度与宽度为固定长度。
+    pub fn size(mut self, width: Rems, height: Rems) -> Self {
+        self.width = width.into();
+        self.height = height.into();
+        self
+    }
+
+    /// 设置高度为固定长度。
+    pub fn height(mut self, height: Rems) -> Self {
+        self.height = height.into();
+        self
+    }
+
+    /// 设置高度铺满可用空间（100%）。
+    pub fn height_full(mut self) -> Self {
+        self.height = relative(1.).into();
+        self
+    }
+
+    /// 高度不声明，由内容与父布局决定。默认值。
+    pub fn height_auto(mut self) -> Self {
+        self.height = Length::Auto;
+        self
+    }
+
+    /// 设置宽度为固定长度。
+    pub fn width(mut self, width: Rems) -> Self {
+        self.width = width.into();
+        self
+    }
+
+    /// 设置宽度铺满可用空间（100%）。
+    pub fn width_full(mut self) -> Self {
+        self.width = relative(1.).into();
+        self
+    }
+
+    /// 宽度不声明，由内容与父布局决定。默认值。
+    pub fn width_auto(mut self) -> Self {
+        self.width = Length::Auto;
+        self
     }
 
     /// 设置 ghost 模式：不绘制卡片表面（背景、边框与投影），标题区仍保留卡片底色。
@@ -95,6 +151,8 @@ impl RenderOnce for Card {
         let Self {
             base,
             ghost,
+            height,
+            width,
             title_padding,
             content_padding,
             gap,
@@ -102,9 +160,12 @@ impl RenderOnce for Card {
             children,
         } = self;
 
+        // 尺寸默认 Auto：不声明尺寸，由内容与父布局决定。
+        // min_h_0 只在高度被显式限制（`height_full` / `height`）时生效：让卡片按声明的高度收缩，不被内容撑破。
         base.flex()
             .flex_col()
-            .size_full()
+            .h(height)
+            .w(width)
             .min_h_0()
             .overflow_hidden()
             .rounded_lg()
