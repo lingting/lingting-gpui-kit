@@ -27,14 +27,15 @@ navigate(cx, "/settings");
 
 ## 路由注册与缓存策略
 
-`Router` 提供两种注册方式，区别只在页面生命周期：
+`Router` 提供三种注册方式，前两种区别只在页面生命周期：
 
 | 方法 | 策略 | 行为 |
 | --- | --- | --- |
 | `add_cache(path, create)` | `Global` | 首次进入创建并写入全局缓存，之后复用同一份页面，**页面内部状态保留** |
 | `add_view(path, create)` | `None` | 只在停留期间存在，离开路由后丢弃，**每次进入都是全新状态** |
+| `add_erased(path, factory, cache)` | 按 `cache` 决定 | 用已擦除的工厂注册，供持有异构路由表的调用方使用（布局层用这一条） |
 
-两者都接受 `T: Render + 'static` 与 `F: Fn(&mut Window, &mut App) -> T + 'static`；工厂最终被擦除为
+`add_cache` / `add_view` 都接受 `T: Render + 'static` 与 `F: Fn(&mut Window, &mut App) -> T + 'static`；工厂最终被擦除为
 `Rc<dyn Fn(&mut Window, &mut App) -> AnyView>`，用 `Rc` 是因为工厂需要捕获页面的构造闭包。
 
 选择原则：需要保留用户输入、滚动位置、已加载数据等状态的页面用 `add_cache`；每次进入都应重置的页面
@@ -42,12 +43,13 @@ navigate(cx, "/settings");
 
 ## 状态与缓存
 
-三个全局状态（均实现 `Global`）：
+四个全局状态（均实现 `Global`）：
 
 - `RouteTable(Router)`：路由表，由 `init` 写入。
 - `PageCache(HashMap<SharedString, AnyView>)`：全局页面缓存。`AnyView` 内部持有实体的强引用，
   因此页面一旦创建就一直存活，切走再切回来状态不丢。
 - `ActiveView(Option<(SharedString, AnyView)>)`：当前非缓存页面，只保留正在显示的那一个。
+- `RoutePath { path }`：当前路径，`Outlet` 订阅它的变化。
 
 对外 API：
 
@@ -65,7 +67,8 @@ navigate(cx, "/settings");
 `Outlet` 是一个实体，内部持有 `cx.observe_global::<RoutePath>` 的 `Subscription`。该订阅必须保持存活，
 否则路径变化时不会重新渲染；因此它是结构体字段而不是临时变量。
 
-渲染时取当前路径对应的页面：命中则渲染（`size_full`），未命中（路径为空或未注册）渲染空 `div`。
+渲染时取当前路径对应的页面：命中则渲染（`size_full` + `overflow_hidden`），未命中（路径为空或未注册）
+渲染同样尺寸的空 `div`。
 
 `page_for_current_path` 按路由的缓存策略分流：
 

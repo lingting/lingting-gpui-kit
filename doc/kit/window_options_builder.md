@@ -64,3 +64,6 @@ GPUI 的 `WindowBounds` 与 `window_min_size` 都是逻辑像素，而窗口实�
 - `size` / `size_min` 只接受 `Size<DevicePixels>`，传入逻辑像素会得到放大的窗口。
 - 屏幕信息在 `build()` 调用时查询一次；窗口创建后显示器切换或缩放变化不会回溯修正。
 - 只查询主显示器；需要指定显示器时用 `bounds` 自行传入逻辑像素矩形。
+- Windows 下由 `windows-sys` 查询主显示器（`MonitorFromPoint` + `GetMonitorInfoW` 取工作区，
+  `GetDpiForMonitor(MDT_EFFECTIVE_DPI)` 取缩放）；`visible_bounds` 为空区域时同样视作查询失败。
+- 本 crate 同时再导出另外三个 crate 的全部内容，但自身只实现这一个模块。

@@ -1,10 +1,19 @@
 # 文档索引
 
 - 组件：`lingting-gpui-components`
-  - [title_bar](components/title_bar.md)：自绘标题栏，左侧图标与标题、中间菜单、右侧 Windows 窗口按钮。
+  - [card](components/card.md)：卡片容器与卡片列表项，含三种选中样式。
+  - [menu](components/menu.md)：点击即跳转路由的菜单项，含两种选中样式。
+  - [sidebar](components/sidebar.md)：顶 / 中 / 底三段式侧栏。
+  - [title_bar](components/title_bar.md)：自绘标题栏，左侧图标与标题、中间内容、右侧 Windows 窗口按钮。
+  - [virtual_card](components/virtual_card.md)：卡片包一层固定高度虚拟列表。
+  - [virtual_list](components/virtual_list.md)：固定行高的虚拟列表，含筛选与空状态。
 - 导航：`lingting-gpui-nav`
   - [readme](nav/readme.md)：路由表、页面出口与页面缓存策略。
 - 布局：`lingting-gpui-layout`
-  - 暂无文档，该 crate 尚未提供布局能力。
+  - [readme](layout/readme.md)：crate 概览与槽位渲染器。
+  - [content](layout/content.md)：承载页面出口的内容区。
+  - [router](layout/router.md)：布局通用的路由定义与注册。
+  - [desktop_sidebar_layout](layout/desktop_sidebar_layout.md)：左侧栏 + 内容区的桌面布局。
+  - [desktop_top_layout](layout/desktop_top_layout.md)：标题栏菜单 + 内容区的桌面布局。
 - 工具：`lingting-gpui-kit`
-  - [window_options_builder](window_options_builder.md)：按物理像素描述窗口尺寸并构造窗口选项。
+  - [window_options_builder](kit/window_options_builder.md)：按物理像素描述窗口尺寸并构造窗口选项。
