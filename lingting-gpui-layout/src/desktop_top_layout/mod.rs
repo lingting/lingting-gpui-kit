@@ -15,7 +15,7 @@ use gpui_kit::*;
 
 use crate::router::RouteDefinition;
 use crate::slot::SlotRenderer;
-use lingting_gpui_components::menu::MenuSelectedStyle;
+use lingting_gpui_components::menu::{MenuSelectedStyle, MenuTextSize};
 use lingting_gpui_nav::Outlet;
 
 /// 桌面顶栏布局。
@@ -51,6 +51,7 @@ pub struct DesktopTopLayout {
     title_bar_windows: lingting_gpui_components::title_bar::WindowsControls,
     menu_height: Option<Pixels>,
     menu_icon_size: Option<Pixels>,
+    menu_text_size: Option<MenuTextSize>,
     menu_selected_style: MenuSelectedStyle,
     padding: Edges<Pixels>,
     content_background: Option<Hsla>,
@@ -72,6 +73,7 @@ impl DesktopTopLayout {
             title_bar_windows: lingting_gpui_components::title_bar::WindowsControls::new(),
             menu_height: None,
             menu_icon_size: None,
+            menu_text_size: None,
             menu_selected_style: MenuSelectedStyle::default(),
             padding: crate::content::default_padding(),
             content_background: None,

@@ -1,3 +1,3 @@
 mod basic;
 
-pub use basic::{Menu, MenuSelectedStyle};
+pub use basic::{Menu, MenuSelectedStyle, MenuTextSize};

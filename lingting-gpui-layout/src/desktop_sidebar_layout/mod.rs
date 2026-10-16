@@ -16,7 +16,7 @@ use gpui_kit::*;
 
 use crate::router::RouteDefinition;
 use crate::slot::SlotRenderer;
-use lingting_gpui_components::menu::MenuSelectedStyle;
+use lingting_gpui_components::menu::{MenuSelectedStyle, MenuTextSize};
 use lingting_gpui_components::sidebar::{BOTTOM_MAX_HEIGHT, TOP_MAX_HEIGHT};
 use lingting_gpui_nav::Outlet;
 
@@ -62,6 +62,7 @@ pub struct DesktopSidebarLayout {
     sidebar_bottom_max_height: Option<Pixels>,
     menu_height: Option<Pixels>,
     menu_icon_size: Option<Pixels>,
+    menu_text_size: Option<MenuTextSize>,
     menu_selected_style: MenuSelectedStyle,
     padding: Edges<Pixels>,
     content_background: Option<Hsla>,
@@ -91,6 +92,7 @@ impl DesktopSidebarLayout {
             sidebar_bottom_max_height: Some(BOTTOM_MAX_HEIGHT),
             menu_height: None,
             menu_icon_size: None,
+            menu_text_size: None,
             menu_selected_style: MenuSelectedStyle::default(),
             padding: crate::content::default_padding(),
             content_background: None,

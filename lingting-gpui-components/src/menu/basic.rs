@@ -11,6 +11,33 @@ const ICON_SIZE: Pixels = px(14.);
 /// 菜单项高度默认值。
 const ITEM_HEIGHT: Pixels = px(32.);
 
+/// 菜单项字号档位。
+///
+/// 档位对应 GPUI 的 `text_xs` / `text_sm` / `text_base` / `text_lg` / `text_xl`，单位是 rem，
+/// 因此跟随主题字号缩放；[`Custom`](Self::Custom) 用具体像素值，脱离该缩放。
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub enum MenuTextSize {
+    /// `text_xs`，0.75rem。
+    XSmall,
+    /// `text_sm`，0.875rem。
+    #[default]
+    Small,
+    /// `text_base`，1rem。
+    Base,
+    /// `text_lg`，1.125rem。
+    Large,
+    /// `text_xl`，1.25rem。
+    XLarge,
+    /// 具体像素值，不随主题字号缩放。
+    Custom(Pixels),
+}
+
+impl From<Pixels> for MenuTextSize {
+    fn from(size: Pixels) -> Self {
+        Self::Custom(size)
+    }
+}
+
 /// 选中项样式。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum MenuSelectedStyle {
@@ -23,7 +50,7 @@ pub enum MenuSelectedStyle {
 
 /// 标题栏菜单项。
 ///
-/// 由 [`Menu::new`] 建立默认值：不显示图标、高度 32px、未选中、
+/// 由 [`Menu::new`] 建立默认值：不显示图标、高度 32px、字号跟随 `text_sm`、未选中、
 /// [`MenuSelectedStyle::Elevated`]，再按需覆盖其中部分。
 #[derive(IntoElement)]
 pub struct Menu {
@@ -32,6 +59,7 @@ pub struct Menu {
     icon: Option<IconName>,
     icon_size: Pixels,
     height: Pixels,
+    text_size: MenuTextSize,
     selected: bool,
     selected_style: MenuSelectedStyle,
 }
@@ -47,6 +75,7 @@ impl Menu {
             icon: None,
             icon_size: ICON_SIZE,
             height: ITEM_HEIGHT,
+            text_size: MenuTextSize::default(),
             selected: false,
             selected_style: MenuSelectedStyle::default(),
         }
@@ -67,6 +96,14 @@ impl Menu {
     /// 覆盖菜单项高度。
     pub fn height(mut self, height: impl Into<Pixels>) -> Self {
         self.height = height.into();
+        self
+    }
+
+    /// 覆盖菜单项字号。
+    ///
+    /// 传 [`MenuTextSize`] 档位（跟随主题字号缩放），或直接传 `Pixels` 用固定像素值。
+    pub fn text_size(mut self, size: impl Into<MenuTextSize>) -> Self {
+        self.text_size = size.into();
         self
     }
 
@@ -117,7 +154,14 @@ impl RenderOnce for Menu {
             .px_4()
             .h(self.height)
             .rounded_md()
-            .text_sm()
+            .map(|this| match self.text_size {
+                MenuTextSize::XSmall => this.text_xs(),
+                MenuTextSize::Small => this.text_sm(),
+                MenuTextSize::Base => this.text_base(),
+                MenuTextSize::Large => this.text_lg(),
+                MenuTextSize::XLarge => this.text_xl(),
+                MenuTextSize::Custom(size) => this.text_size(size),
+            })
             .cursor_pointer()
             .when(self.selected, |this| match self.selected_style {
                 MenuSelectedStyle::Elevated => this

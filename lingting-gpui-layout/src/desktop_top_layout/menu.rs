@@ -1,6 +1,6 @@
 use gpui_kit::*;
 
-use lingting_gpui_components::menu::{Menu, MenuSelectedStyle};
+use lingting_gpui_components::menu::{Menu, MenuSelectedStyle, MenuTextSize};
 use lingting_gpui_nav::current_path;
 
 use super::DesktopTopLayout;
@@ -19,6 +19,14 @@ impl DesktopTopLayout {
     /// 覆盖菜单项图标尺寸。
     pub fn menu_icon_size(mut self, size: impl Into<Pixels>) -> Self {
         self.menu_icon_size = Some(size.into());
+        self
+    }
+
+    /// 覆盖菜单项字号。
+    ///
+    /// 传 [`MenuTextSize`] 档位（跟随主题字号缩放），或直接传 `Pixels` 用固定像素值。
+    pub fn menu_text_size(mut self, size: impl Into<MenuTextSize>) -> Self {
+        self.menu_text_size = Some(size.into());
         self
     }
 
@@ -49,6 +57,9 @@ impl DesktopTopLayout {
                 }
                 if let Some(size) = self.menu_icon_size {
                     menu = menu.icon_size(size);
+                }
+                if let Some(size) = self.menu_text_size {
+                    menu = menu.text_size(size);
                 }
                 menu
             })
