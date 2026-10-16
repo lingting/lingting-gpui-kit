@@ -6,7 +6,6 @@ mod route;
 mod sidebar;
 mod title_bar;
 
-pub use crate::router::RouteDefinition;
 pub use route::init_router;
 
 use std::rc::Rc;
@@ -15,6 +14,7 @@ use gpui_kit::base::{h_flex, v_flex};
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::*;
 
+use crate::router::RouteDefinition;
 use crate::slot::SlotRenderer;
 use lingting_gpui_components::menu::MenuSelectedStyle;
 use lingting_gpui_components::sidebar::{BOTTOM_MAX_HEIGHT, TOP_MAX_HEIGHT};
