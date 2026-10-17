@@ -2,6 +2,7 @@
 
 - 组件：`lingting-gpui-components`
   - [card](components/card.md)：卡片容器与卡片列表项，含四种选中样式。
+  - [ex_dialog](components/ex_dialog.md)：API 与 `Dialog` 一致的对话框，内容与底部额外补 `p_1`。
   - [menu](components/menu.md)：点击即跳转路由的菜单项，含两种选中样式；长度可 rem 可 px。
   - [region](components/region.md)：国家与地区的数据查询、区域旗帜资源与旗帜 / 标签 / 单选 / 多选。
   - [sidebar](components/sidebar.md)：顶 / 中 / 底三段式侧栏。
