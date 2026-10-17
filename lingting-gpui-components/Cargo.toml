@@ -14,3 +14,5 @@ description.workspace = true
 lingting-gpui-core.workspace = true
 lingting-gpui-nav.workspace = true
 gpui-kit = { workspace = true }
+framework-region.workspace = true
+rust-embed = "8.7"

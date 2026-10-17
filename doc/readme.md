@@ -3,6 +3,7 @@
 - 组件：`lingting-gpui-components`
   - [card](components/card.md)：卡片容器与卡片列表项，含四种选中样式。
   - [menu](components/menu.md)：点击即跳转路由的菜单项，含两种选中样式；长度可 rem 可 px。
+  - [region](components/region.md)：国家与地区的数据查询、区域旗帜资源与旗帜 / 标签 / 单选 / 多选。
   - [sidebar](components/sidebar.md)：顶 / 中 / 底三段式侧栏。
   - [title_bar](components/title_bar.md)：自绘标题栏，基座拖动层加内容层（左侧图标与标题、中间内容、右侧 Windows 窗口按钮）。
   - [virtual_card](components/virtual_card.md)：卡片包一层固定高度虚拟列表。
