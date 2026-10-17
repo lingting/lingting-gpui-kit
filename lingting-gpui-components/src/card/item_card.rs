@@ -22,12 +22,12 @@ impl ItemCardSelectedStyle {
     /// 图标颜色。
     ///
     /// SVG 不继承文本颜色，图标必须由调用方显式设色；这里按样式给出取值，免得每个调用点
-    /// 自己判断选中态：未选中取 `muted_foreground`，选中时 `Filled` 取反白、其余取主题色。
-    pub fn icon_color(self, selected: bool, theme: &Theme) -> Hsla {
+    /// 自己判断选中态：未选中取 `unselected`（卡片自己不渲染图标，缺省色由调用方决定），
+    /// 选中时 `Filled` 取反白、其余取主题色。
+    pub fn icon_color(self, selected: bool, unselected: Hsla, theme: &Theme) -> Hsla {
         if !selected {
-            return theme.muted_foreground;
+            return unselected;
         }
-
         match self {
             Self::Filled => theme.primary_foreground,
             Self::Tinted | Self::Elevated | Self::Accent => theme.primary,
@@ -51,6 +51,15 @@ fn selected_shadow() -> Vec<BoxShadow> {
     ]
 }
 
+/// 水平内边距默认值，0.75rem（`px_3`）。
+const HORIZONTAL_PADDING: Rems = rems(0.75);
+
+/// 圆角默认值，0.5rem（`rounded_lg`）。
+const RADIUS: Rems = rems(0.5);
+
+/// 栏间距默认值，0.75rem（`gap_3`）。
+const GAP: Rems = rems(0.75);
+
 /// 行点击处理。
 type ClickHandler = Box<dyn Fn(&mut Window, &mut App) + 'static>;
 
@@ -63,6 +72,14 @@ pub struct ItemCard {
     center: Option<AnyElement>,
     right: Option<AnyElement>,
     right_width: Option<Rems>,
+    /// 四边内边距，默认水平 `rems(0.75)`、垂直 `rems(0.)`（与原先的 `px_3` 一致）。
+    padding: Edges<Rems>,
+    radius: Rems,
+    gap: Rems,
+    /// 未选中时是否绘制边框，默认 `true`。
+    border_unselected: bool,
+    /// 未选中时的底色，默认取主题 `background`。
+    bg_unselected: Option<Hsla>,
     style: StyleRefinement,
     selected: bool,
     selected_style: ItemCardSelectedStyle,
@@ -80,6 +97,16 @@ impl ItemCard {
             center: None,
             right: None,
             right_width: None,
+            padding: Edges {
+                top: rems(0.),
+                right: HORIZONTAL_PADDING,
+                bottom: rems(0.),
+                left: HORIZONTAL_PADDING,
+            },
+            radius: RADIUS,
+            gap: GAP,
+            border_unselected: true,
+            bg_unselected: None,
             style: StyleRefinement::default(),
             selected: false,
             selected_style: ItemCardSelectedStyle::default(),
@@ -132,6 +159,61 @@ impl ItemCard {
         self
     }
 
+    /// 覆盖四边内边距，默认垂直 `rems(0.)`、水平 `rems(0.75)`。
+    ///
+    /// 行高由 `h` 决定，上下内边距会把内容区压小，因此默认只在水平方向留白；
+    /// 与 [`Styled::p`](gpui_kit::Styled::p) 不同，这里在用户样式之后应用，不会被 `refine_style` 覆盖。
+    pub fn padding(mut self, padding: impl Into<Rems>) -> Self {
+        let padding = padding.into();
+        self.padding = Edges::all(padding);
+        self
+    }
+
+    /// 只覆盖水平内边距。
+    pub fn padding_x(mut self, padding: impl Into<Rems>) -> Self {
+        let padding = padding.into();
+        self.padding.left = padding;
+        self.padding.right = padding;
+        self
+    }
+
+    /// 只覆盖垂直内边距。
+    pub fn padding_y(mut self, padding: impl Into<Rems>) -> Self {
+        let padding = padding.into();
+        self.padding.top = padding;
+        self.padding.bottom = padding;
+        self
+    }
+
+    /// 覆盖圆角，默认为 `rems(0.5)`（`rounded_lg`）。
+    pub fn radius(mut self, radius: impl Into<Rems>) -> Self {
+        self.radius = radius.into();
+        self
+    }
+
+    /// 覆盖栏间距，默认为 `rems(0.75)`（`gap_3`）。
+    pub fn gap(mut self, gap: impl Into<Rems>) -> Self {
+        self.gap = gap.into();
+        self
+    }
+
+    /// 设置未选中时是否绘制边框，默认为 `true`。
+    ///
+    /// 关掉后未选中态只剩底色与悬停反馈，选中态仍然按 [`ItemCardSelectedStyle`] 画边框。
+    pub fn border_unselected(mut self, border: bool) -> Self {
+        self.border_unselected = border;
+        self
+    }
+
+    /// 设置未选中时的底色，默认为主题 `background`。
+    ///
+    /// 放在标题栏、侧栏这类已有底色的容器里时，卡片可以传 `transparent_black()` 让容器底色透出。
+    /// 悬停底色仍然按 `secondary_hover` 叠加在上层。
+    pub fn bg_unselected(mut self, color: Hsla) -> Self {
+        self.bg_unselected = Some(color);
+        self
+    }
+
     /// 设置选中态。
     pub fn selected(mut self, selected: bool) -> Self {
         self.selected = selected;
@@ -171,6 +253,11 @@ impl RenderOnce for ItemCard {
             center,
             right,
             right_width,
+            padding,
+            radius,
+            gap,
+            border_unselected,
+            bg_unselected,
             style,
             selected,
             selected_style,
@@ -191,13 +278,16 @@ impl RenderOnce for ItemCard {
             .id(id)
             .flex()
             .items_center()
-            .gap_3()
+            .gap(gap)
             .h_full()
             .w_full()
-            .px_3()
+            .pt(padding.top)
+            .pb(padding.bottom)
+            .pl(padding.left)
+            .pr(padding.right)
             .refine_style(&style)
-            .rounded_lg()
-            .border_1()
+            .rounded(radius)
+            .when(!selected || border_unselected, |this| this.border_1())
             .when(selected, |this| match selected_style {
                 // 选中是持久状态，用元素自身的底色与边框表达，不用单侧边条。
                 ItemCardSelectedStyle::Tinted => this
@@ -224,8 +314,10 @@ impl RenderOnce for ItemCard {
                     }),
             })
             .when(!selected, |this| {
-                this.bg(cx.theme().background)
-                    .border_color(cx.theme().border)
+                this.bg(bg_unselected.unwrap_or(cx.theme().background))
+                    .when(border_unselected, |this| {
+                        this.border_color(cx.theme().border)
+                    })
                     .when(hoverable, |this| {
                         this.hover(|this| this.bg(cx.theme().secondary_hover))
                     })

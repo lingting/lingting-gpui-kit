@@ -1,27 +1,30 @@
-use gpui_kit::*;
+use crate::card::ItemCardSelectedStyle;
 
 /// 选中项样式。
+///
+/// 取值与 [`ItemCardSelectedStyle`] 一一对应：菜单项复用 `ItemCard` 渲染，
+/// 这里只是菜单这一层的样式名，渲染时映射过去，因此菜单项也能用 `Tinted` 与 `Accent`。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum MenuSelectedStyle {
-    /// 浮起：主题背景色、一圈浅边与投影，视觉上从标题栏里浮起来。
+    /// 浅染：主题色边框配一层很淡的主题色底。
+    Tinted,
+    /// 浮起：主题背景色、一圈浅边与投影，视觉上从标题栏 / 侧栏里浮起来。
     #[default]
     Elevated,
+    /// 强调：浮起的底色与投影之上，再把文字设为主题色并加粗。
+    Accent,
     /// 实底：主题色背景配反白文字与图标，选中项整块染色。
     Filled,
 }
 
-/// 选中项的投影。
-///
-/// GPUI 的 `blur_radius` 是高斯标准差，而 CSS 的 blur 是它的两倍，
-/// 照搬 Tailwind 的半径会糊成一片灰雾，因此这里取一半的半径。
-///
-/// `BoxShadow` 的偏移、模糊与扩散半径在 GPUI 里就是 `Pixels`，只能用 `px()`。
-pub(super) fn selected_shadow() -> Vec<BoxShadow> {
-    let ink = hsla(0., 0., 0., 0.1);
-    vec![
-        BoxShadow::new(px(0.), px(1.), ink).blur_radius(px(1.5)),
-        BoxShadow::new(px(0.), px(2.), ink)
-            .blur_radius(px(2.))
-            .spread_radius(px(-1.)),
-    ]
+impl MenuSelectedStyle {
+    /// 对应的卡片选中样式。
+    pub(crate) fn card(self) -> ItemCardSelectedStyle {
+        match self {
+            Self::Tinted => ItemCardSelectedStyle::Tinted,
+            Self::Elevated => ItemCardSelectedStyle::Elevated,
+            Self::Accent => ItemCardSelectedStyle::Accent,
+            Self::Filled => ItemCardSelectedStyle::Filled,
+        }
+    }
 }

@@ -5,10 +5,15 @@ use gpui_kit::*;
 
 use lingting_gpui_nav::navigate;
 
+use crate::card::ItemCard;
+
 use super::constants::{ICON_SIZE, ITEM_HEIGHT, TEXT_SIZE};
-use super::selected_style::{MenuSelectedStyle, selected_shadow};
+use super::selected_style::MenuSelectedStyle;
 
 /// 标题栏菜单项。
+///
+/// 行本身由 [`ItemCard`] 渲染：三栏布局、选中样式、悬浮与焦点反馈都来自卡片，
+/// 这里只负责把图标、文案与跳转行为填进去。
 ///
 /// 由 [`Menu::new`] 建立默认值：不显示图标、高度 2rem、字号 `text_sm`、未选中、
 /// [`MenuSelectedStyle::Elevated`]，再按需覆盖其中部分。
@@ -85,49 +90,35 @@ impl RenderOnce for Menu {
     fn render(self, _window: &mut Window, cx: &mut App) -> impl IntoElement {
         let theme = cx.theme();
         let path = self.path.clone();
-        let filled = self.selected && self.selected_style == MenuSelectedStyle::Filled;
+        let selected_style = self.selected_style;
         // SVG 不继承文本颜色，必须显式给值，否则图标不绘制。
-        let icon_color = if filled {
-            theme.primary_foreground
-        } else {
-            theme.foreground
-        };
+        let icon_color = selected_style
+            .card()
+            .icon_color(self.selected, theme.foreground, theme);
 
-        div()
-            .id(self.path)
-            .flex()
-            .items_center()
-            .gap_2()
-            .px_4()
+        ItemCard::new(self.path)
+            .selected(self.selected)
+            .selected_style(selected_style.card())
             .h(self.height)
-            .rounded_md()
             .text_size(self.text_size)
+            // 还原菜单项原来的行样式：`px_4`、`gap_2`、`rounded_md`，未选中时不画边框。
+            .padding_x(rems(1.))
+            .padding_y(rems(0.))
+            .gap(rems(0.5))
+            .radius(rems(0.375))
+            .border_unselected(false)
+            // 菜单项自身的底色交给外层容器，未选中时不铺 `background`，否则会把标题栏 / 侧栏的底色盖住。
+            .bg_unselected(transparent_black())
             .cursor_pointer()
-            .when(self.selected, |this| match self.selected_style {
-                MenuSelectedStyle::Elevated => this
-                    .bg(theme.background)
-                    .text_color(theme.foreground)
-                    .border_1()
-                    .border_color(theme.border)
-                    .shadow(selected_shadow()),
-                MenuSelectedStyle::Filled => this
-                    .bg(theme.primary)
-                    .text_color(theme.primary_foreground)
-                    .hover(|this| this.bg(theme.primary_hover)),
-            })
-            .when(!self.selected, |this| {
-                this.hover(|this| this.bg(theme.secondary_hover))
-            })
-            .on_click(move |_, _, cx| navigate(cx, &path))
+            .on_click(move |_, cx| navigate(cx, &path))
             .when_some(self.icon, |this, icon| {
-                this.child(
+                this.left(
                     svg()
                         .path(icon.path())
                         .size(self.icon_size)
                         .text_color(icon_color),
                 )
             })
-            .child(self.label)
-            .into_any_element()
+            .center(self.label)
     }
 }
