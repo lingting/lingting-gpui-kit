@@ -107,7 +107,6 @@ fn default_render(
         .when(flag, |this| this.child(RegionFlag::new(region.iso)))
         .child(
             div()
-                .text_sm()
                 .text_color(cx.theme().foreground)
                 .child(language.name(region)),
         )
