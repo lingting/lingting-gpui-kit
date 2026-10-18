@@ -9,6 +9,16 @@ pub(crate) struct PrimaryScreen {
     pub scale_factor: f32,
 }
 
+/// 主屏幕的物理像素尺寸与缩放因子，供需要按分辨率决定界面倍率的调用方使用。
+///
+/// GPUI 的 `PlatformDisplay` 只暴露逻辑尺寸，且没有统一的缩放因子接口，
+/// 因此这里直接查系统；查询失败时返回 `None`，调用方按 100% 缩放处理。
+pub fn primary_screen_scale() -> Option<(DevicePixels, DevicePixels, f32)> {
+    let screen = primary_screen()?;
+    let size = screen.visible_bounds.size;
+    Some((size.width, size.height, screen.scale_factor))
+}
+
 /// 查询主屏幕；平台未提供或查询失败时返回 `None`。
 #[cfg(target_os = "windows")]
 pub(crate) fn primary_screen() -> Option<PrimaryScreen> {

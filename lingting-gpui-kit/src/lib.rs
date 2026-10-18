@@ -5,4 +5,4 @@ pub use lingting_gpui_nav::*;
 
 mod window_options_builder;
 
-pub use window_options_builder::WindowOptionsBuilder;
+pub use window_options_builder::{WindowOptionsBuilder, primary_screen_scale};

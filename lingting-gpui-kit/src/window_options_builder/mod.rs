@@ -4,3 +4,4 @@ mod screen;
 mod traffic_light;
 
 pub use builder::WindowOptionsBuilder;
+pub use screen::primary_screen_scale;
