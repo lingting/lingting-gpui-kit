@@ -7,22 +7,25 @@
 │ 标题区（Dialog 原有布局）       │
 ├──────────────────────────────┤
 │ ┌──────────────────────────┐ │
-│ │ p_1  用户内容             │ │
+│ │ py_2 / px_3  用户内容      │ │
 │ └──────────────────────────┘ │
 │ ┌──────────────────────────┐ │
-│ │ p_1  用户底部（按钮）      │ │
+│ │ py_2 / px_3  用户底部      │ │
 │ └──────────────────────────┘ │
 └──────────────────────────────┘
 ```
 
 `ExDialog` 内部只持有一个 [`Dialog`]，方法逐个转发，签名与 `Dialog` 完全一致；唯一的差别是
-用户传入的内容与底部会各自被包一层 `p_1`（0.25rem）：
+用户传入的内容与底部会各自被补上内边距：**上下 `0.5rem`（`py_2`）、左右 `0.75rem`（`px_3`）**。
 
-- `content`：在交给用户构建器的 `DialogContent` 上先补 `p_1`；
-- `footer`：用户传入的底部包一层 `div().p_1()`。
+- `content`：在交给用户构建器的 `DialogContent` 上先补 `py_2` / `px_3`；
+- `footer`：用户传入的底部包一层带同样内边距的 `div`；
+- `child` / `children`：追加的元素同样包一层带同样内边距的 `div`。
 
 目的是避免内容与底部完全贴到弹窗边缘，让投影、焦点环等需要溢出空间的样式不被裁掉。
 没有调用 `content` / `footer` 时不产生任何包装，行为与 `Dialog` 一致。
+
+内边距只有一处定义（`PADDING_Y` / `PADDING_X` 与 `padded()` 助手），三处包装共用，改值只改这一处。
 
 ## 方法
 
@@ -32,9 +35,9 @@
 | --- | --- | --- |
 | `new(cx: &mut App)` | — | 无标题、无内容、无底部 |
 | `trigger(impl IntoElement)` | 无 | 点击该元素打开对话框 |
-| `content(Fn(DialogContent, &mut Window, &mut App) -> DialogContent)` | 无 | 内容，**额外补 `p_1`** |
+| `content(Fn(DialogContent, &mut Window, &mut App) -> DialogContent)` | 无 | 内容，**额外补 `py_2` / `px_3`** |
 | `title(impl IntoElement)` | 无 | 标题 |
-| `footer(impl IntoElement)` | 无 | 底部，**额外补 `p_1`** |
+| `footer(impl IntoElement)` | 无 | 底部，**额外补 `py_2` / `px_3`** |
 | `button_props(DialogButtonProps)` | 默认 | 只覆盖传入的字段 |
 | `on_close(Fn(&ClickEvent, &mut Window, &mut App))` | 无 | 关闭后回调 |
 | `on_ok(Fn(..) -> bool)` | 关闭对话框 | 返回 `false` 不关闭 |
@@ -75,9 +78,16 @@ window.open_dialog(cx, |dialog, window, cx| {
 没有 `From<ExDialog> for Dialog`：`Dialog` 属于 `gpui-component`，在本地 crate 实现该方向的
 `From` 会违反孤儿规则，只能用 `into_dialog()`。
 
+## 模块结构
+
+| 文件 | 职责 |
+| --- | --- |
+| `mod.rs` | 模块声明与 `pub use basic::ExDialog` |
+| `basic.rs` | 内边距常量、`padded()` 助手、`ExDialog` 结构体、`new` / `into_dialog`、`From<Dialog>`、`ParentElement` / `Styled` / `RenderOnce` |
+| `builder.rs` | 转发 `Dialog` 的全部构建方法 |
+
 ## 注意点
 
-- `p_1` 加在 `DialogContent` 自身，`Dialog` 原本给内容容器设的左右内边距与 `gap` 仍在。
-- 用户在 `content` 构建器里自己再设 `p_*` 会覆盖这层 `p_1`（`refine` 语义），属于显式覆盖。
+- 内边距加在 `DialogContent` 自身，`Dialog` 原本给内容容器设的左右内边距与 `gap` 仍在。
+- 用户在 `content` 构建器里自己再设 `p_*` / `py_*` / `px_*` 会覆盖这层内边距（`refine` 语义），属于显式覆盖。
 - 底部包装只负责内边距，`DialogFooter` 的 `justify_end` 等布局仍由调用方决定。
-
