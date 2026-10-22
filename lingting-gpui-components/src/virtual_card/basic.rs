@@ -17,6 +17,7 @@ pub struct VirtualCard<T: 'static> {
     filter: Option<ItemFilter<T>>,
     item_renderer: Option<ItemRenderer<T>>,
     empty: Option<AnyElement>,
+    scroll_handle: Option<UniformListScrollHandle>,
     style: StyleRefinement,
 }
 
@@ -32,6 +33,7 @@ impl<T: 'static> VirtualCard<T> {
             filter: None,
             item_renderer: None,
             empty: None,
+            scroll_handle: None,
             style: StyleRefinement::default(),
         }
     }
@@ -136,6 +138,15 @@ impl<T: 'static> VirtualCard<T> {
         self.empty = Some(empty.into_any_element());
         self
     }
+
+    /// 注入外部滚动句柄，透传给 [`FixedVirtualList`]。
+    ///
+    /// 需要由页面主动滚动列表（例如新内容到达时保持在底部）时使用；
+    /// 未注入时列表按 `id` 自行保存滚动状态。
+    pub fn scroll_handle(mut self, handle: UniformListScrollHandle) -> Self {
+        self.scroll_handle = Some(handle);
+        self
+    }
 }
 
 impl<T: 'static> Styled for VirtualCard<T> {
@@ -154,6 +165,7 @@ impl<T: 'static> RenderOnce for VirtualCard<T> {
             filter,
             item_renderer,
             empty,
+            scroll_handle,
             style,
         } = self;
 
@@ -164,6 +176,7 @@ impl<T: 'static> RenderOnce for VirtualCard<T> {
                 .when_some(filter, |this, filter| this.filter(filter))
                 .when_some(item_renderer, |this, renderer| this.item_renderer(renderer))
                 .when_some(empty, |this, empty| this.empty(empty))
+                .when_some(scroll_handle, |this, handle| this.scroll_handle(handle))
                 .refine_style(&style),
         )
     }

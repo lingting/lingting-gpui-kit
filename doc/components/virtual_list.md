@@ -20,6 +20,22 @@ FixedVirtualList::new("device-list")
     .empty("暂无设备")
 ```
 
+需要主动滚动时，自己持有句柄再注入：
+
+```rust
+let handle = UniformListScrollHandle::new();
+
+// 渲染时注入
+FixedVirtualList::new("log-list")
+    .items(logs)
+    .item_height(rems(1.5))
+    .item_renderer(render_log)
+    .scroll_handle(handle.clone())
+
+// 之后在事件里主动滚到末尾
+handle.scroll_to_item(last_index, ScrollStrategy::Bottom);
+```
+
 ## API
 
 `FixedVirtualList<T>` 是 `IntoElement`，也是 `Styled`。
@@ -32,18 +48,23 @@ FixedVirtualList::new("device-list")
 | `filter(ItemFilter<T>)` | 无 | 筛选条件，未命中任何子项时显示空状态 |
 | `item_renderer(ItemRenderer<T>)` | 无 | 子项渲染器；未设置时不渲染列表 |
 | `empty(impl IntoElement)` | “暂无数据” | 空状态 |
+| `scroll_handle(UniformListScrollHandle)` | 无 | 注入外部滚动句柄，列表改用它保存的滚动位置；未注入时按 `id` 自建 |
 
 ## 行为
 
 - 筛选只记录原始下标（`Rc<Vec<usize>>`），渲染时按下标取数据，因此不需要克隆数据，
   也不需要把筛选结果收集成新的元素列表；
-- 滚动位置必须跨帧保留，句柄存在以列表 `id` 为键的元素状态里（`UniformListScrollHandle`）；
+- 滚动位置必须跨帧保留：默认把 `UniformListScrollHandle` 存在以列表 `id` 为键的元素状态里；
+  通过 `scroll_handle` 注入句柄后改用调用方持有的那个，此时列表不再自建状态，调用方可以对同一句柄
+  调用 `scroll_to_item` 主动滚动（例如新内容到达时保持在底部）；
 - 数量为 0 时渲染空状态，居中、`text_sm`、颜色取 `muted_foreground`；
 - 数量大于 0 时渲染 `uniform_list`，并在其上叠一个纵向 `Scrollbar`。滚动条浮在内容之上、贴列表右边缘：
   它不占布局宽度，子项仍铺满列表宽度，因此只会盖住内容最右侧的一小条。
 
 ## 注意点
 
-- `id` 必须稳定且唯一：它同时决定滚动状态与元素身份。
+- `id` 必须稳定且唯一：它同时决定默认滚动状态与元素身份。注入 `scroll_handle` 后滚动状态改由句柄
+  持有，`id` 只影响元素身份。
+- 注入的句柄必须由调用方长期持有（不要每帧新建），否则跨帧的滚动位置会丢。
 - `item_height` 是固定值，变高内容会被裁掉；需要变高时不能用这个列表。
 - `item_renderer` 未设置时列表区域为空（没有 `uniform_list` 也没有滚动条），但仍会按数量判断是否显示空状态。

@@ -24,6 +24,8 @@ pub struct FixedVirtualList<T: 'static> {
     filter: Option<ItemFilter<T>>,
     item_renderer: Option<ItemRenderer<T>>,
     empty: Option<AnyElement>,
+    /// 调用方注入的滚动句柄，未注入时列表自建一个。
+    scroll_handle: Option<UniformListScrollHandle>,
     style: StyleRefinement,
 }
 
@@ -37,8 +39,18 @@ impl<T: 'static> FixedVirtualList<T> {
             filter: None,
             item_renderer: None,
             empty: None,
+            scroll_handle: None,
             style: StyleRefinement::default(),
         }
+    }
+
+    /// 注入外部滚动句柄，列表改用它的滚动位置。
+    ///
+    /// 默认由列表按 `id` 自行保存滚动状态；调用方需要主动滚动（例如保持在底部）时，
+    /// 自己持有一个句柄并在这里注入，之后可以对它调用 `scroll_to_item`。
+    pub fn scroll_handle(mut self, handle: UniformListScrollHandle) -> Self {
+        self.scroll_handle = Some(handle);
+        self
     }
 
     /// 设置数据。列表只持有数据引用，不会克隆每一条子项。
@@ -87,6 +99,7 @@ impl<T: 'static> RenderOnce for FixedVirtualList<T> {
             filter,
             item_renderer,
             empty,
+            scroll_handle,
             style,
         } = self;
 
@@ -98,14 +111,16 @@ impl<T: 'static> RenderOnce for FixedVirtualList<T> {
         let count = visible.len();
         let item_height = item_height.to_pixels(window.rem_size());
 
-        // 滚动位置必须跨帧保留，因此句柄存放在以列表 id 为键的元素状态里。
-        let scroll_handle = window
-            .use_keyed_state((id.clone(), "scroll"), cx, |_, _| {
-                UniformListScrollHandle::new()
-            })
-            .read(cx)
-            .clone();
-
+        // 滚动位置必须跨帧保留：调用方注入句柄时用它，否则存放在以列表 id 为键的元素状态里。
+        let scroll_handle = match scroll_handle {
+            Some(handle) => handle,
+            None => window
+                .use_keyed_state((id.clone(), "scroll"), cx, |_, _| {
+                    UniformListScrollHandle::new()
+                })
+                .read(cx)
+                .clone(),
+        };
         let list = item_renderer.map(|item_renderer| {
             let items = items.clone();
             let visible = visible.clone();

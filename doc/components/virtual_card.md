@@ -33,6 +33,7 @@
 | `filter(ItemFilter<T>)` | 无 | 筛选条件 |
 | `item_renderer(ItemRenderer<T>)` | 无 | 子项渲染器 |
 | `empty(impl IntoElement)` | “暂无数据” | 空状态 |
+| `scroll_handle(UniformListScrollHandle)` | 无 | 透传给内部的 `FixedVirtualList`，用于调用方主动滚动 |
 
 `VirtualCard<T>` 是 `IntoElement`，也是 `Styled`；`Styled` 作用在内部的虚拟列表上，
 因此内边距等样式透传给列表而不是卡片。卡片尺寸用 `card_*` 系列方法设置，
@@ -44,5 +45,5 @@
   上没有对应的透传方法。
 - 虚拟列表需要确定的高度才能算出可视区，因此卡片默认 `card_size_full()`；
   改成 `card_size_auto()` 或 `card_height_auto()` 后列表会塌成 0 高。
-- `item_height`、`id` 的要求与 [`FixedVirtualList`](virtual_list.md) 相同：
-  行高固定、`id` 稳定且唯一。
+- `item_height`、`id`、`scroll_handle` 的要求与 [`FixedVirtualList`](virtual_list.md) 相同：
+  行高固定、`id` 稳定且唯一、注入的滚动句柄由调用方长期持有。
