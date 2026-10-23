@@ -21,11 +21,11 @@ description = "lingting network control"
 
 [workspace.dependencies]
 
-lingting-gpui-kit = { path = "lingting-gpui-kit" }
-lingting-gpui-components = { path = "lingting-gpui-components" }
-lingting-gpui-core = { path = "lingting-gpui-core" }
-lingting-gpui-layout = { path = "lingting-gpui-layout" }
-lingting-gpui-nav = { path = "lingting-gpui-nav" }
+lingting-gpui-kit = { path = "lingting-gpui-kit", version = "26.10.0" }
+lingting-gpui-components = { path = "lingting-gpui-components", version = "26.10.0" }
+lingting-gpui-core = { path = "lingting-gpui-core", version = "26.10.0" }
+lingting-gpui-layout = { path = "lingting-gpui-layout", version = "26.10.0" }
+lingting-gpui-nav = { path = "lingting-gpui-nav", version = "26.10.0" }
 
 simple_logger = "5.0"
 time = "0.3"
