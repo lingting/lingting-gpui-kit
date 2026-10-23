@@ -9,11 +9,17 @@ on:
 permissions:
   contents: write
 
+env:
+  CARGO_TERM_COLOR: always
+  # 调试信息占编译产物的绝大部分体积和链接时间, CI 不需要, 关掉可让依赖缓存
+  # 稳定留在仓库的 10 GB 上限内, 避免被淘汰后每次冷编译。
+  CARGO_PROFILE_DEV_DEBUG: 0
+
 jobs:
   publish:
-    # GPUI 依赖在 Linux 上还需要一批系统库, 本仓库直接用 Windows 编译环境,
-    # 与本地开发环境保持一致。公开仓库使用 Windows runner 不计费。
-    runs-on: windows-latest
+    # 用 ubuntu-latest: Windows runner 排队久且编译慢。系统依赖见
+    # scripts/install-dependencies.sh。
+    runs-on: ubuntu-latest
 
     env:
       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -23,6 +29,9 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+
+      - name: Install Linux dependencies
+        run: bash scripts/install-dependencies.sh
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@1.98.0
@@ -35,7 +44,5 @@ jobs:
         with:
           tool: cargo-workspaces
 
-      # 脚本是 bash 语法, 用 runner 自带的 Git Bash 执行
       - name: Publish
-        shell: bash
         run: bash scripts/publish.sh
