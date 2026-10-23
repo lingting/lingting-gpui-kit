@@ -1,0 +1,41 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    # GPUI 依赖在 Linux 上还需要一批系统库, 本仓库直接用 Windows 编译环境,
+    # 与本地开发环境保持一致。公开仓库使用 Windows runner 不计费。
+    runs-on: windows-latest
+
+    env:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@1.98.0
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo-workspaces
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-workspaces
+
+      # 脚本是 bash 语法, 用 runner 自带的 Git Bash 执行
+      - name: Publish
+        shell: bash
+        run: bash scripts/publish.sh
