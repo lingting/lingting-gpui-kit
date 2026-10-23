@@ -1735,7 +1735,9 @@ dependencies = [
 
 [[package]]
 name = "framework-region"
-version = "26.8.150"
+version = "26.8.151"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5dd03de3b79a3bdafafb2047b132abc76dd7f05a06fda8c2672f56b0c4bfa4a7"
 dependencies = [
  "serde",
  "serde_json",
