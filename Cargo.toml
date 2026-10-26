@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "lingting-gpui-bus",
     "lingting-gpui-components",
     "lingting-gpui-core",
     "lingting-gpui-kit",
@@ -21,6 +22,7 @@ description = "lingting network control"
 
 [workspace.dependencies]
 
+lingting-gpui-bus = { path = "lingting-gpui-bus", version = "26.10.1" }
 lingting-gpui-kit = { path = "lingting-gpui-kit", version = "26.10.1" }
 lingting-gpui-components = { path = "lingting-gpui-components", version = "26.10.1" }
 lingting-gpui-core = { path = "lingting-gpui-core", version = "26.10.1" }
@@ -65,15 +67,8 @@ windows = "0.61"
 # build
 winres = "0.1"
 
-framework-core = "26.8.151"
-framework-datetime = "26.8.151"
-framework-region = "26.8.151"
-framework-proc-auto = "26.8.151"
-framework-proc-core = "26.8.151"
-framework-proc-ts = "26.8.151"
-framework-proc-web = "26.8.151"
-framework-web = "26.8.151"
-framework-web-axum = "26.8.151"
+framework-region = { path = "D:/code/lingting/lingting-rust-framework/framework-region" }
+framework-bus = { path = "D:/code/lingting/lingting-rust-framework/framework-bus" }
 
 aes = { version = "0.8" }
 base64 = { version = "0.22" }

@@ -3,7 +3,8 @@
 GPUI Kit 的分层封装库。依赖方向：`lingting-gpui-core` 不依赖任何内部 crate，
 `lingting-gpui-nav` → `gpui-kit` + `core`，`lingting-gpui-components` → `lingting-gpui-nav` + `core`，
 `lingting-gpui-layout` → `lingting-gpui-components` / `lingting-gpui-nav` + `core`，
-`lingting-gpui-kit` → 其余四个 crate 且只做统一再导出。
+`lingting-gpui-bus` 只依赖 `gpui-kit` + `framework-bus`，其余 crate 都不依赖它，
+`lingting-gpui-kit` → 其余五个 crate 且只做统一再导出。
 
 ## 文档规则
 

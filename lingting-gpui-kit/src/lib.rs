@@ -1,3 +1,4 @@
+pub use lingting_gpui_bus::*;
 pub use lingting_gpui_components::*;
 pub use lingting_gpui_core::*;
 pub use lingting_gpui_layout::*;

@@ -9,6 +9,8 @@
   - [title_bar](components/title_bar.md)：自绘标题栏，基座拖动层加内容层（左侧图标与标题、中间内容、右侧 Windows 窗口按钮）。
   - [virtual_card](components/virtual_card.md)：卡片包一层固定高度虚拟列表。
   - [virtual_list](components/virtual_list.md)：固定行高的虚拟列表，含筛选与空状态。
+- 桥接：`lingting-gpui-bus`
+  - [readme](bus/readme.md)：页面订阅总线通知、全局总线安装与 GPUI 后台分发者。
 - 导航：`lingting-gpui-nav`
   - [readme](nav/readme.md)：路由表、页面出口与页面缓存策略。
 - 布局：`lingting-gpui-layout`
