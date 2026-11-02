@@ -1773,7 +1773,7 @@ dependencies = [
 
 [[package]]
 name = "framework-bus"
-version = "26.8.151"
+version = "26.11.0"
 dependencies = [
  "log",
  "tokio",
@@ -1781,7 +1781,7 @@ dependencies = [
 
 [[package]]
 name = "framework-region"
-version = "26.8.151"
+version = "26.11.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -3802,7 +3802,7 @@ checksum = "d4a5ff6bcca6c4867b1c4fd4ef63e4db7436ef363e0ad7531d1558856bae64f4"
 
 [[package]]
 name = "lingting-gpui-bus"
-version = "26.10.1"
+version = "26.11.0"
 dependencies = [
  "framework-bus",
  "gpui-kit",
@@ -3810,7 +3810,7 @@ dependencies = [
 
 [[package]]
 name = "lingting-gpui-components"
-version = "26.10.1"
+version = "26.11.0"
 dependencies = [
  "framework-region",
  "gpui-kit",
@@ -3821,14 +3821,14 @@ dependencies = [
 
 [[package]]
 name = "lingting-gpui-core"
-version = "26.10.1"
+version = "26.11.0"
 dependencies = [
  "gpui-kit",
 ]
 
 [[package]]
 name = "lingting-gpui-kit"
-version = "26.10.1"
+version = "26.11.0"
 dependencies = [
  "embed-resource",
  "gpui-kit",
@@ -3842,7 +3842,7 @@ dependencies = [
 
 [[package]]
 name = "lingting-gpui-layout"
-version = "26.10.1"
+version = "26.11.0"
 dependencies = [
  "gpui-kit",
  "lingting-gpui-components",
@@ -3852,7 +3852,7 @@ dependencies = [
 
 [[package]]
 name = "lingting-gpui-nav"
-version = "26.10.1"
+version = "26.11.0"
 dependencies = [
  "gpui-kit",
  "lingting-gpui-core",
